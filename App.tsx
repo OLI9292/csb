@@ -1,5 +1,15 @@
 import React from 'react'
 import { Component } from 'react';
+import { Navigation } from 'react-native-navigation';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import HelloScreen from './components/Hello';
+
+import {
+  registerScreens,
+  registerScreenVisibilityListener
+} from './screens';
+
 import {
   Platform,
   StyleSheet,
@@ -7,47 +17,85 @@ import {
   View
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+// Register all of the app's screens
+registerScreens();
+registerScreenVisibilityListener();
+
+type NavBarIcons = {
+  sword: any,
+  emoticon: any,
+  stadium: any
+};
+
+async function prepareIcons(): Promise<NavBarIcons> {
+  try {
+    const [sword, emoticon, stadium] = await Promise.all([
+      Icon.getImageSource('sword', 30),
+      Icon.getImageSource('emoticon', 30),
+      Icon.getImageSource('stadium', 30)
+    ]);
+    return { sword, emoticon, stadium };
+  } catch (error) {
+    return { sword: "?", emoticon: "?", stadium: "?" }
+  }
+}
+
+async function startApp(): Promise<void> {
+
+  const icons = await prepareIcons();
+
+  Navigation.startTabBasedApp({
+    tabs: [
+      {
+        label: 'Solo',
+        screen: 'example.HelloScreen',
+        icon: icons.sword,
+        selectedIcon: icons.sword,
+        title: 'Solo'
+      },
+      {
+        label: 'Me',
+        screen: 'example.HelloScreen',
+        icon: icons.emoticon,
+        selectedIcon: icons.emoticon,
+        title: 'Me'
+      },
+      {
+        label: 'Battle',
+        screen: 'example.HelloScreen',
+        icon: icons.stadium,
+        selectedIcon: icons.stadium,
+        title: 'Battle'
+      }
+    ]
+  });
+}
+
+startApp();
+/*try {
 
 type Props = {};
 export default class App extends Component<Props> {
+  constructor(props: Props) {
+    super(props)
+    this.state = {}
+  }
+  
+  componentDidMount() {
+    this.props.navigator.push({
+      screen: 'example.HelloScreen',
+      title: 'Pushed Screen'
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
+      <View>
+        <Text>
+          hi
         </Text>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+*/
