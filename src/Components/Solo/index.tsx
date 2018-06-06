@@ -1,6 +1,6 @@
 import React from 'react'
 import { Component } from 'react'
-import styled from "styled-components/native"
+import styled from "styled-components"
 
 import { colors, lighten10l } from '../../lib/colors'
 import Button from '../Common/Button'
@@ -18,13 +18,13 @@ export default class Solo extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    /*this.props.navigator.showModal({
+    this.props.navigator.showModal({
       screen: "example.WelcomeScreen",
       animationType: "none",
       navigatorStyle: {
         navBarHidden: true
       }
-    });*/
+    });
   }
 
   startGame() {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Component } from 'react'
-import styled from "styled-components/native"
+import styled from "styled-components"
 import { colors } from '../../lib/colors';
 
 interface StyledProps {
