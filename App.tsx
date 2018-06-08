@@ -3,8 +3,6 @@ import { Component } from 'react';
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import HelloScreen from './components/Hello';
-
 import {
   registerScreens,
   registerScreenVisibilityListener
@@ -48,21 +46,21 @@ async function startApp(): Promise<void> {
     tabs: [
       {
         label: 'Solo',
-        screen: 'example.HelloScreen',
+        screen: 'example.SoloScreen',
         icon: icons.sword,
         selectedIcon: icons.sword,
         title: 'Solo'
       },
       {
         label: 'Me',
-        screen: 'example.HelloScreen',
+        screen: 'example.MeScreen',
         icon: icons.emoticon,
         selectedIcon: icons.emoticon,
         title: 'Me'
       },
       {
         label: 'Battle',
-        screen: 'example.HelloScreen',
+        screen: 'example.MeScreen',
         icon: icons.stadium,
         selectedIcon: icons.stadium,
         title: 'Battle'
@@ -72,30 +70,3 @@ async function startApp(): Promise<void> {
 }
 
 startApp();
-/*try {
-
-type Props = {};
-export default class App extends Component<Props> {
-  constructor(props: Props) {
-    super(props)
-    this.state = {}
-  }
-  
-  componentDidMount() {
-    this.props.navigator.push({
-      screen: 'example.HelloScreen',
-      title: 'Pushed Screen'
-    });
-  }
-
-  render() {
-    return (
-      <View>
-        <Text>
-          hi
-        </Text>
-      </View>
-    );
-  }
-}
-*/
