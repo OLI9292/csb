@@ -1,26 +1,30 @@
 import React from 'react'
 import { Component } from 'react'
-import styled from "styled-components"
+import styled from "styled-components/native"
 import { colors, lighten10l } from '../../lib/colors';
 
+interface ButtonTextProps { 
+  color: string
+}
+
 const ButtonText = styled.Text`
-  color: white;
+  color: ${(p: ButtonTextProps) => p.color};
   font-size: 16px;
   font-family: BrandonGrotesque-Bold;
 `;
 
 interface TouchableHighlightProps {
   _margin: string,
-  color: string
+  color: string,
+  small: boolean
 }
-
 
 const StyledButton = styled.TouchableHighlight`
   margin: ${(p: TouchableHighlightProps) => p._margin};
   padding: 10px;
   background-color: ${(p: TouchableHighlightProps) => p.color};
   border-radius: 30px;
-  width: 200px;
+  width: ${(p: TouchableHighlightProps) => p.small ? "100px" : "200px"};
   height: 50px;
   display: flex;
   align-items: center;
@@ -30,6 +34,7 @@ const StyledButton = styled.TouchableHighlight`
 interface Props {
   margin?: string,
   disabled?: boolean,
+  small?: boolean,
   color: string,
   text: string,
   onPress: () => void
@@ -48,9 +53,11 @@ export default class Button extends Component<Props, State> {
         disabled={this.props.disabled}
         _margin={this.props.margin || "0px"}
         color={this.props.color}
+        small={this.props.small || false}
         underlayColor={lighten10l(this.props.color)}
         onPress={this.props.onPress.bind(this)}>
-        <ButtonText>
+        <ButtonText 
+          color={this.props.small ? colors.gray : "white"}>
           {this.props.text.toUpperCase()}
         </ButtonText>
       </StyledButton>

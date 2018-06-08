@@ -3,8 +3,6 @@ import { Component } from 'react';
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import SoloScreen from './src/Components/Solo';
-
 import {
   registerScreens,
   registerScreenVisibilityListener
@@ -55,14 +53,14 @@ async function startApp(): Promise<void> {
       },
       {
         label: 'Me',
-        screen: 'example.SoloScreen',
+        screen: 'example.MeScreen',
         icon: icons.emoticon,
         selectedIcon: icons.emoticon,
         title: 'Me'
       },
       {
         label: 'Battle',
-        screen: 'example.SoloScreen',
+        screen: 'example.MeScreen',
         icon: icons.stadium,
         selectedIcon: icons.stadium,
         title: 'Battle'

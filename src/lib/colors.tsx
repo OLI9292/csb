@@ -7,7 +7,8 @@ export const colors = {
   red: '#FD7274',
   red10l: '#FF7171',
   gray: '#828282',
-  lightGray: '#d9d9d9'
+  lightGray: '#d9d9d9',
+  white: '#ffffff'
 };
 
 export const lighten10l = function(color: string):string  {
@@ -15,6 +16,7 @@ export const lighten10l = function(color: string):string  {
     case colors.blue: return colors.blue10l
     case colors.red: return colors.red10l;
     case colors.green: return colors.green10l;
+    case colors.white: return colors.white;
     default: return "black"
   }
 };

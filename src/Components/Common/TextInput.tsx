@@ -1,7 +1,7 @@
 import React from 'react'
 import { Component } from 'react'
 import styled from "styled-components"
-import { colors } from '../../lib/colors';
+import { colors } from '../../lib/colors'
 
 interface StyledProps {
   _margin?: string
