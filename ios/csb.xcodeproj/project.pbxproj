@@ -5,13 +5,16 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		00C7B3B401574EA4B51088E5 /* BrandonGrotesque-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 574114EC9CFA4B479DC4D20F /* BrandonGrotesque-Regular.otf */; };
 		00E356F31AD99517003FC87E /* csbTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* csbTests.m */; };
+		0661AAEF2EE34F1CBC8F8201 /* BrandonGrotesque-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 51DA3976488D45AFA67C23FD /* BrandonGrotesque-Bold.otf */; };
 		0930C13F130E443AB372FA8F /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD67968AC73493D8DC95762 /* libRNVectorIcons.a */; };
 		0A3D5B78A03E483D9D73FA38 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79B4CB033C2F48B79C2FE959 /* Entypo.ttf */; };
 		0DE31FF789564965BFAED54B /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C652D74B3AC24C9CAE59E80C /* Feather.ttf */; };
@@ -24,6 +27,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		147CE8640D27474CBCDD29A8 /* BrandonGrotesque-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = EF7CE1F35E3247A6BDE1AF84 /* BrandonGrotesque-Light.otf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -40,6 +44,7 @@
 		4736499CD86946AEAD28D27A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DC22B934139C49138F15500F /* FontAwesome.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		72348D2CFB384C10835C952B /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA19657E151D4C8382572DAB /* Foundation.ttf */; };
+		81F478B811F7488DA14C6FC7 /* BrandonGrotesque-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9ED811F3461F4A46868C55BE /* BrandonGrotesque-SemiBold.otf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		99A1C14776A04BAFAD688117 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20FE4689375944069BDF839F /* Ionicons.ttf */; };
 		9F344FF90B3F4AA2A23AAEDE /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE756617842744629CEF16F4 /* Octicons.ttf */; };
@@ -62,10 +67,6 @@
 		DB5187173CAA484DA46E5E3D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6FD0A15965764B1A90D4CEA8 /* MaterialIcons.ttf */; };
 		E761874537C545A4952D0FF2 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E795639E64EC4381B9ECB447 /* Zocial.ttf */; };
 		EFB7631C3D504E86AC994C9E /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE7F39225DFC4BB6BF9183E9 /* EvilIcons.ttf */; };
-		0661AAEF2EE34F1CBC8F8201 /* BrandonGrotesque-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 51DA3976488D45AFA67C23FD /* BrandonGrotesque-Bold.otf */; };
-		147CE8640D27474CBCDD29A8 /* BrandonGrotesque-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = EF7CE1F35E3247A6BDE1AF84 /* BrandonGrotesque-Light.otf */; };
-		00C7B3B401574EA4B51088E5 /* BrandonGrotesque-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 574114EC9CFA4B479DC4D20F /* BrandonGrotesque-Regular.otf */; };
-		81F478B811F7488DA14C6FC7 /* BrandonGrotesque-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9ED811F3461F4A46868C55BE /* BrandonGrotesque-SemiBold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -384,11 +385,14 @@
 		2D02E4901E0B4A5D006451C7 /* csb-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "csb-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FD67968AC73493D8DC95762 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		51DA3976488D45AFA67C23FD /* BrandonGrotesque-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BrandonGrotesque-Bold.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Bold.otf"; sourceTree = "<group>"; };
+		574114EC9CFA4B479DC4D20F /* BrandonGrotesque-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BrandonGrotesque-Regular.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Regular.otf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		6FD0A15965764B1A90D4CEA8 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		79B4CB033C2F48B79C2FE959 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		9ED811F3461F4A46868C55BE /* BrandonGrotesque-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BrandonGrotesque-SemiBold.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-SemiBold.otf"; sourceTree = "<group>"; };
 		A0B476089856417EB0A09DC4 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		A788C0A220C5758300F22CAE /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		A788C0A320C5758300F22CAE /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
@@ -409,12 +413,9 @@
 		DC22B934139C49138F15500F /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		E795639E64EC4381B9ECB447 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		EA19657E151D4C8382572DAB /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		EF7CE1F35E3247A6BDE1AF84 /* BrandonGrotesque-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BrandonGrotesque-Light.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Light.otf"; sourceTree = "<group>"; };
 		FE756617842744629CEF16F4 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		FE7F39225DFC4BB6BF9183E9 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		51DA3976488D45AFA67C23FD /* BrandonGrotesque-Bold.otf */ = {isa = PBXFileReference; name = "BrandonGrotesque-Bold.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		EF7CE1F35E3247A6BDE1AF84 /* BrandonGrotesque-Light.otf */ = {isa = PBXFileReference; name = "BrandonGrotesque-Light.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		574114EC9CFA4B479DC4D20F /* BrandonGrotesque-Regular.otf */ = {isa = PBXFileReference; name = "BrandonGrotesque-Regular.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9ED811F3461F4A46868C55BE /* BrandonGrotesque-SemiBold.otf */ = {isa = PBXFileReference; name = "BrandonGrotesque-SemiBold.otf"; path = "../src/lib/assets/fonts/BrandonGrotesque/BrandonGrotesque-SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
