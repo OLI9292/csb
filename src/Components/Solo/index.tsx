@@ -29,9 +29,7 @@ export default class Solo extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      questions: [],
-      selectedCategory: "latin",
-      selectedSubCategory: "intro"
+      questions: []
     }
   }
 
