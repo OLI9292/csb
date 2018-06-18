@@ -34,14 +34,11 @@ export default class ProgressBar extends React.Component<Props, State> {
   render() {
     return (
       <ContainerView>
-        
         <Background
-          onLayout={event => this.setState({ width: event.nativeEvent.layout.width })} />
-        
+          onLayout={(event: any) => this.setState({ width: event.nativeEvent.layout.width })} />
         <Animated.View style={[{ width: this.state.animation }]}>
           <Progress />
         </Animated.View>
-        
       </ContainerView>
     )
   }
@@ -50,7 +47,7 @@ export default class ProgressBar extends React.Component<Props, State> {
 const ContainerView = styled.View`
   flex: 8;
   justify-content: center;
-  margin: 0px 25px;
+  margin: 0px 5px;
 `;
 
 const Background = styled.View`

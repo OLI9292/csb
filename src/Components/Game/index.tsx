@@ -80,18 +80,16 @@ export default class Game extends React.Component<Props, State> {
           questionDone={this.questionDone.bind(this)}
           question={questions[questionIndex]} />
 
-        <BottomContainerView>
-          {
-            questionDone &&
-            <Button
-              underlayColor={colors.green10l}
-              onPress={this.nextQuestion.bind(this)}>
-              <Text>
-                CONTINUE
-              </Text>
-            </Button>
-          }
-        </BottomContainerView>
+        {
+          questionDone &&
+          <Button
+            underlayColor={colors.green10l}
+            onPress={this.nextQuestion.bind(this)}>
+            <Text>
+              CONTINUE
+            </Text>
+          </Button>
+        }
       </ContainerView>
     )
   }
@@ -107,6 +105,9 @@ const Button = styled.TouchableHighlight`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
   background-color: ${colors.green};
 `;
 
@@ -118,7 +119,6 @@ const Text = styled.Text`
 const ContainerView = styled.View`
   flex: 1;
   align-self: stretch;
-  margin: 20px 20px 0px 20px;
 `;
 
 const TopContainerView = styled.View`
@@ -127,9 +127,5 @@ const TopContainerView = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-`
-
-const BottomContainerView = styled.View`  
-  flex: 1;
-  align-items: flex-end;
+  margin: 0px 5px;
 `

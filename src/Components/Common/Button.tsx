@@ -21,10 +21,10 @@ interface TouchableHighlightProps {
 
 const StyledButton = styled.TouchableHighlight`
   margin: ${(p: TouchableHighlightProps) => p._margin};
-  padding: 10px;
+  padding: 10px 15px;
   background-color: ${(p: TouchableHighlightProps) => p.color};
   border-radius: 30px;
-  width: ${(p: TouchableHighlightProps) => p.small ? "100px" : "200px"};
+  min-width: ${(p: TouchableHighlightProps) => p.small ? "50px" : "200px"};
   height: 50px;
   display: flex;
   align-items: center;

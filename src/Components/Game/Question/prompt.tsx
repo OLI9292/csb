@@ -52,10 +52,9 @@ export default class Prompt extends React.Component<Props, State> {
   }
 }
 
-const ContainerView = styled.View`
+const ContainerView = styled.ScrollView`
   flex: 2;
   width: 100%;
-  justify-content: center;
 `;
 
 interface TextProps {
@@ -63,8 +62,8 @@ interface TextProps {
 }
 
 const Text = styled.Text`
-  text-align: center;
-  font-size: 20px;
+  text-align: left;
+  font-size: 16px;
   font-family: ${(p: TextProps) => p.highlight ? "BrandonGrotesque-Bold" : "BrandonGrotesque-Regular"};
   color: ${(p: TextProps) => p.highlight ? colors.yellow : "black"};
 `;

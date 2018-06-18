@@ -9,9 +9,8 @@ export interface UserAnswer {
 }
 
 export interface Props {
-  userAnswers: UserAnswer[],
-  choices: any[][],
-  layer: number,
+  userAnswers: string[],
+  choiceTree: any,
   isCorrecting: boolean
 }
 
@@ -22,42 +21,32 @@ export default class Answer extends React.Component<Props, State> {
     super(props)
     this.state = {}
   }
-
-  componentWillReceiveProps(nextProps: Props) {    
-  }
     
   render() {
     const {
-      choices,
+      choiceTree,
       userAnswers,
-      layer,
       isCorrecting
     } = this.props
 
-    const answerSpace = (value: string, correct: boolean, missing: boolean) => <AnswerSpace 
+    const answer = (value: string, idx: number): JSX.Element => <Text 
+      correct={value === choiceTree.answers[idx]}
+      isCorrecting={isCorrecting}
       key={value}>
-      <Text
-        missing={missing}>
-        {value.toUpperCase()}
-      </Text>
-      <Underline
-        isCorrecting={isCorrecting}
-        correct={correct}
-        missing={missing} />
-    </AnswerSpace>
+      {value}
+    </Text>
+
+    const separator = (idx: number): JSX.Element => <Text key={idx}>, </Text> 
     
-    const filled = userAnswers
-      .map(a => answerSpace(a.value, a.correct, false))
-
-    const unfilled = choices.slice(filled.length)
-      .map(layer => {
-        const value = layer.filter(c => c.correct)[0].value as string
-        return answerSpace(value, true, true)
-      })
-
     return (
       <ContainerView>
-        {filled.concat(unfilled)}    
+        {
+          userAnswers
+            .map((a, i) => answer(a, i))
+            .reduce((accu: (JSX.Element | null)[] | null, elem: JSX.Element | null, idx: number) => {
+              return accu === null ? [elem] : [...accu, separator(idx), elem]
+            }, null)
+        }    
       </ContainerView>
     )
   }
@@ -74,23 +63,15 @@ const ContainerView = styled.View`
   align-items: center;
 `
 
-interface MissingProps {
+interface TextProps {
   missing: boolean,
   correct?: boolean,
   isCorrecting?: boolean
 }
 
 const Text = styled.Text`
-  font-size: 24;
-  font-family: BrandonGrotesque-Bold;
-  opacity: ${(p: MissingProps) => p.missing ? 0 : 1};
-`
-
-const Underline = styled.View`
-  background-color: ${(p: MissingProps) => p.isCorrecting 
-    ?  p.correct ? colors.green : colors.red
-    : "black"};
-  height: 4px;
-  border-radius: 2px;
-  margin: 0px -2px;
+  font-size: 18;
+  color: ${(p: TextProps) => p.isCorrecting ? (p.correct ? colors.green : colors.red) : "black"};
+  font-family: BrandonGrotesque-Regular;
+  opacity: ${(p: TextProps) => p.missing ? 0 : 1};
 `

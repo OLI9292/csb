@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from "styled-components"
 import { Animated } from "react-native"
 
 import Prompt from './prompt'
@@ -16,7 +15,10 @@ export interface Props {
 interface State {
   question?: any,
   opacityAnimation: Animated.Value,
-  userAnswers: UserAnswer[],
+  userAnswers: string[],
+  answers: string[],
+  currentChoices: string[],
+  choiceTree?: any,
   layer: number,
   isCorrecting: boolean
 }
@@ -31,6 +33,8 @@ export default class Question extends React.Component<Props, State> {
 
     this.state = {
       isCorrecting: false,
+      answers: [],
+      currentChoices: [],
       layer: 0,
       userAnswers: [],
       opacityAnimation: new Animated.Value(1)
@@ -55,59 +59,109 @@ export default class Question extends React.Component<Props, State> {
   }
 
   reset(question: any) {
+    const choiceTree = question.choiceTreeJson && JSON.parse(question.choiceTreeJson)
+    let answers = choiceTree.answers
+    answers.shift()
+
     this.setState({
+      choiceTree: choiceTree,
+      answers: answers,
       question: question,
-      layer: 0,
       isCorrecting: false,
       userAnswers: []
-    })
+    }, this.checkInput)
   }
 
-  
+  checkInput() {
+    let { choiceTree } = this.state
+    let tree = this.state.choiceTree.tree
+    let userAnswers = _.clone(this.state.userAnswers)
+    let answers = _.clone(this.state.answers)
 
-  guessed(userAnwer: UserAnswer, layer: number) {  
+    while (userAnswers.length) {
+      if (this.state.isCorrecting) {
+        const correct = userAnswers[0] === answers[0]
+        if (correct) {
+          tree = tree.branches[userAnswers[0]]
+          userAnswers.shift()
+          answers.shift()  
+        } else {
+          userAnswers = []
+        }
+      } else {
+        tree = tree.branches[userAnswers[0]]
+        userAnswers.shift()  
+      }
+    }
+    
+    if (tree.branches) {
+      const currentChoices = _.keys(tree.branches)
+      this.setState({ currentChoices })
+    } else {
+      if (this.questionDone()) {
+        console.log("questionDone2")
+        this.setState({ isCorrecting: true }, this.props.questionDone)
+      } else {
+        this.setState({ isCorrecting: true }, this.checkInput)        
+      }
+    }
+  }
+
+  questionDone() {
+    return this.incorrectIndex() === -1
+  }
+
+  incorrectIndex() {
+    const incorrect = (pair: string[]): boolean => pair[0] !== pair[1]
+    return _.findIndex(_.zip(this.state.userAnswers, this.state.answers), incorrect)
+  }
+
+  guessed(value: string) {  
     let {
-      userAnswers,
-      question,
-      isCorrecting
+      choiceTree,
+      isCorrecting,
+      userAnswers
     } = this.state
 
-    userAnswers[layer] = userAnwer
-    this.setState({ userAnswers })
-    layer = layer + 1
-    
-    isCorrecting = isCorrecting ||  layer === question.choices.length
-    if (isCorrecting) { this.setState({ isCorrecting }) }
-
-    const done = _.every(userAnswers, a => a.correct) &&
-      userAnswers.length === question.choices.length
-
-    if (done) {
-      this.props.questionDone()
-    } else {
+    if (choiceTree) {
       if (isCorrecting) {
-        const incorrectLayer = _.findIndex(userAnswers, u => !u.correct)
-        if (incorrectLayer > -1) { this.setState({ layer: incorrectLayer }) }
+        const incorrectIndex = this.incorrectIndex()
+        userAnswers[incorrectIndex] = value
+        if (this.questionDone()) {
+          this.setState({ userAnswers }, this.props.questionDone)
+        } else {
+          this.setState({ userAnswers }, this.checkInput)
+        }
       } else {
-        this.setState({ layer })
+        userAnswers = userAnswers.concat(value)
+        this.setState({ userAnswers }, this.checkInput)  
       }
     }
   }
 
   render() {
-    if (!this.state.question) { 
-      return null
-    }
-    
     const {
       layer,
       userAnswers,
       question,
-      isCorrecting
+      choiceTree,
+      isCorrecting,
+      currentChoices
     } = this.state
 
+    if (!question) { 
+      return null
+    }
+
     return (
-      <Animated.View style={[{ opacity: this.state.opacityAnimation, flex: 8, alignSelf: "stretch" }]}>
+      <Animated.View style={[{
+        opacity: this.state.opacityAnimation,
+        flex: 12,
+        alignSelf: "stretch",
+        marginLeft: 10,
+        marginRight: 10
+        }]}>
+        
         <Prompt
           ref={this.promptComponent}
           prompt={question.prompt}
@@ -115,15 +169,13 @@ export default class Question extends React.Component<Props, State> {
 
         <Answer
           isCorrecting={isCorrecting}
-          layer={layer}
-          choices={question.choices}
+          choiceTree={choiceTree}
           userAnswers={userAnswers} />          
 
         <Choices
           isInterlude={this.props.isInterlude}
           ref={this.choicesComponent}
-          layer={layer}
-          data={question.choices}
+          data={currentChoices}
           guessed={this.guessed.bind(this)} />
       </Animated.View>
     )
