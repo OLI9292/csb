@@ -20,26 +20,26 @@
     "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "@types/jest": "^22.2.3",
-    "@types/react": "^16.3.14",
-    "@types/react-native": "^0.55.16",
-    "@types/react-test-renderer": "^16.0.1",
-    "babel-jest": "23.0.1",
-    "babel-preset-react-native": "4.0.0",
-    "jest": "23.1.0",
-    "react-addons-test-utils": "^15.6.2",
-    "react-native-typescript-transformer": "^1.2.9",
-    "react-test-renderer": "16.3.1",
-    "ts-jest": "^22.4.6",
-    "typescript": "^2.8.4",
-    "react-dom": "16.3.1",
-    "prop-types": "^15.6.1",
-    "@storybook/react-native": "^4.0.0-alpha.8",
     "@storybook/addon-actions": "^4.0.0-alpha.8",
     "@storybook/addon-links": "^4.0.0-alpha.8",
     "@storybook/addons": "^4.0.0-alpha.8",
+    "@storybook/react-native": "^4.0.0-alpha.8",
+    "@types/jest": "^23.1.0",
+    "@types/react": "^16.3.17",
+    "@types/react-native": "^0.55.19",
+    "@types/react-test-renderer": "^16.0.1",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-runtime": "^7.0.0-beta.3"
+    "babel-jest": "23.0.1",
+    "babel-preset-react-native": "4.0.0",
+    "babel-runtime": "^7.0.0-beta.3",
+    "jest": "23.1.0",
+    "prop-types": "^15.6.1",
+    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "16.3.1",
+    "react-native-typescript-transformer": "^1.2.9",
+    "react-test-renderer": "16.3.1",
+    "ts-jest": "^22.4.6",
+    "typescript": "^2.8.4"
   },
   "jest": {
     "preset": "react-native",
@@ -58,16 +58,5 @@
       "<rootDir>/node_modules/"
     ],
     "cacheDirectory": ".jest/cache"
-  },
-  "loader": "ts-loader",
-  "exclude": "/node_modules/",
-  "options": {
-    "context": "__dirname",
-    "configFile": "tsconfig.client.json"
-  },
-  "rnpm": {
-    "assets": [
-      "./src/lib/assets/fonts"
-    ]
   }
 }

@@ -9,6 +9,8 @@ import Header from '../Common/Header'
 import { fetchQuestions } from '../../Models/question'
 import _ from "underscore"
 
+import mock from './mock'
+
 export interface Props {
   navigator: any
 }
@@ -25,6 +27,7 @@ interface State {
   selectedSubCategory?: string
 }
 
+
 export default class Solo extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -34,11 +37,21 @@ export default class Solo extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const result = await fetchQuestions()
-    if (result.error) {
-      console.log(result.error)
+    const START_IMMEDIATELY = false
+
+    const questions = await fetchQuestions()
+
+    if (questions.error) {
+      console.log(questions.error)
     } else {
-      this.setState({ questions: result })
+      this.setState(
+        { questions },
+        () => {
+          if (START_IMMEDIATELY) {
+            this.selected("1.1.1", "oliver test","test")
+          }
+        }
+      )
     }
   }
 
@@ -62,7 +75,9 @@ export default class Solo extends React.Component<Props, State> {
       animationType: "none",
       passProps: { questions: _.sortBy(questions, "identifier") },
       navigatorStyle: {
-        navBarHidden: true
+        navBarHidden: true,
+        statusBarHidden: true,
+        statusBarHideWithNavBar: true
       }
     });
   }
@@ -112,10 +127,12 @@ export default class Solo extends React.Component<Props, State> {
                 text={"back"} />
             }
           </FlexView>
-          
-          <Header.m>
-            {title}
-          </Header.m>
+
+          <LongFlexView>
+            <Header.m center>
+              {title}
+            </Header.m>
+          </LongFlexView>
 
           <FlexView />
         </TopView>
@@ -127,24 +144,24 @@ export default class Solo extends React.Component<Props, State> {
   }
 }
 
-const ContainerView = styled.View`
+const ContainerView = styled.ScrollView`
   flex: 9;
-  align-items: center;
-  justify-content: center;
 `
 
 const TopView = styled.View` 
-  flex: 1;
-  align-items: center;
-  justify-content: center;
   flex-direction: row;
+  margin-top: 20px;
 `
 
 const ButtonView = styled.View` 
-  flex: 7;
   align-items: center;
+  margin-top: 20px;
 `
 
 const FlexView = styled.View`
   flex: 1;
+`
+
+const LongFlexView = styled.View`
+  flex: 2; 
 `

@@ -9,9 +9,8 @@ import { UserAnswer } from './answer'
 
 export interface Props {
   ref: React.RefObject<Choices>,
-  data: any[],
-  guessed: (userAnswer: UserAnswer, layer: number) => void,
-  layer: number,
+  data: string[],
+  guessed: (value: string) => void,
   isInterlude: boolean
 }
 
@@ -22,7 +21,7 @@ interface State {
 export default class Choices extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = {
+      this.state = {
       hintAnimation: new Animated.Value(0)
     }
   }  
@@ -30,67 +29,61 @@ export default class Choices extends React.Component<Props, State> {
   render() {
     const {
       data,
-      layer,
       isInterlude
     } = this.props
 
-    const choice = (value: string, correct: boolean, idx: number) => {
-      return <Button
-        key={idx}
-        color={colors.blue}
-        underlayColor={colors.blue10l}
-        onPress={() => this.props.guessed({ value: value, correct: correct }, layer)}>
-        <TextContainer>
-          <Text>
-            {value.toUpperCase()}
-          </Text>
-        </TextContainer>
-      </Button>
-    }
+    const choice = (value: string, idx: number) => <Button
+      key={idx}
+      color={colors.blue}
+      underlayColor={colors.blue10l}
+      onPress={() => this.props.guessed(value)}>
+      <Text>
+        {value.toUpperCase()}
+      </Text>
+    </Button>
 
-    const choices = chunk(this.props.data[layer], 2)
-      .map((group, i) => <SplitView 
-        key={i}>
-        {group.map((d, i) => choice(d.value as string, d.correct as boolean, i))}
-      </SplitView>)
+    const choices = this.props.data
+      .map((d: string, i: number) => choice(d, i))
 
     return (
-      <ContainerView>
-        {!isInterlude && choices}
-      </ContainerView>
+      <ScrollView>
+        <ContainerView>
+          {!isInterlude && choices}
+        </ContainerView>
+      </ScrollView>
     )
   }
 }
 
+const ScrollView = styled.ScrollView`
+  flex: 3;
+`
 
 const ContainerView = styled.View`
-  flex: 3;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  flex-direction: row;  
 `;
 
-const SplitView = styled.View`
-  flex-direction: row;
-`;
 
 interface ButtonProps {
   color: string
 }
 
 const Button = styled.TouchableHighlight`
-  margin: 10px;
-  padding: 10px;
-  height: 50px;
-  flex: 1
+  margin: 3px;
+  padding: 0px 10px;
+  min-height: 40px;
   align-items: center;
   justify-content: center;
   background-color: ${(p: ButtonProps) => p.color};
-  border-radius: 10;
-`;
-
-const TextContainer = styled.View`
+  border-radius: 5;
 `;
 
 const Text = styled.Text`
-  color: white;
-  text-align: center;
-  font-family: BrandonGrotesque-Bold;
+  color: white; 
+  font-family: BrandonGrotesque-Regular;
+  font-size: 12px;
 `;
