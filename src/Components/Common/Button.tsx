@@ -21,11 +21,10 @@ interface TouchableHighlightProps {
 
 const StyledButton = styled.TouchableHighlight`
   margin: ${(p: TouchableHighlightProps) => p._margin};
-  padding: 10px 15px;
+  padding: 12px 15px;
   background-color: ${(p: TouchableHighlightProps) => p.color};
   border-radius: 30px;
   min-width: ${(p: TouchableHighlightProps) => p.small ? "50px" : "200px"};
-  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,6 +34,7 @@ interface Props {
   margin?: string,
   disabled?: boolean,
   small?: boolean,
+  highlight?: boolean,
   color: string,
   text: string,
   onPress: () => void
@@ -57,7 +57,9 @@ export default class Button extends Component<Props, State> {
         underlayColor={lighten10l(this.props.color)}
         onPress={this.props.onPress.bind(this)}>
         <ButtonText 
-          color={this.props.small ? colors.gray : "white"}>
+          color={this.props.small
+            ? this.props.highlight ? colors.blue : colors.gray
+            : "white"}>
           {this.props.text.toUpperCase()}
         </ButtonText>
       </StyledButton>

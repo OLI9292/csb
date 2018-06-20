@@ -1,6 +1,6 @@
 import React from 'react'
 import { Component } from 'react'
-import styled from "styled-components"
+import styled from "styled-components/native"
 import { colors } from '../../lib/colors'
 
 interface StyledProps {
@@ -20,6 +20,8 @@ export interface Props {
   margin: string,
   placeholder: string,
   text: string,
+  autoCapitalize?: string,
+  secureTextEntry?: boolean,
   onChangeText: (str: string) => void
 }
 
@@ -32,6 +34,8 @@ export default class TextInput extends Component<Props, State> {
 
   render() {
     return <StyledTextInput
+      secureTextEntry={this.props.secureTextEntry}
+      autoCapitalize={this.props.autoCapitalize || "none"}
       autoFocus={true}
       _margin={this.props.margin}
       placeholder={this.props.placeholder}

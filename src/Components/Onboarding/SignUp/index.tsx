@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from "styled-components/native"
+import _ from "underscore"
 
 import { colors, lighten10l } from '../../../lib/colors'
 
@@ -23,7 +24,8 @@ interface State {
   email?: string,
   password?: string,
   username?: string,
-  isNetworking: boolean
+  isNetworking: boolean,
+  isShowingPassword: boolean
 }
 
 export default class SignUp extends React.Component<Props, State> {
@@ -33,6 +35,7 @@ export default class SignUp extends React.Component<Props, State> {
       step: Step.Email,
       userInputValid: false,
       userInput: "",
+      isShowingPassword: false,
       isNetworking: false
     }
   }
@@ -78,6 +81,7 @@ export default class SignUp extends React.Component<Props, State> {
       step: step,
       userInput: "",
       userInputValid: false,
+      isShowingPassword: false,
       error: undefined
     })
   }
@@ -119,6 +123,11 @@ export default class SignUp extends React.Component<Props, State> {
     saveUser(email, password, username, _id)
     this.props.navigator.dismissAllModals()
   }
+
+  showPassword() {
+    const isShowingPassword = !this.state.isShowingPassword
+    this.setState({ isShowingPassword })
+  }
   
   render() {
     const {
@@ -126,6 +135,7 @@ export default class SignUp extends React.Component<Props, State> {
       userInput,
       userInputValid,
       error,
+      isShowingPassword,
       isNetworking
     } = this.state
 
@@ -134,6 +144,8 @@ export default class SignUp extends React.Component<Props, State> {
       subheader,
       placeholder
     } = textForStep(step)
+
+    const isEnteringPassword = _.includes([1, 2], step)
 
     return (
       <ContainerView>
@@ -147,11 +159,24 @@ export default class SignUp extends React.Component<Props, State> {
           {subheader}
         </Text.m>
 
-        <TextInput
-          text={userInput}
-          onChangeText={this.handleUserInput.bind(this)}
-          margin={"50px 0px 30px 0px"}
-          placeholder={placeholder} />
+
+        <InputContainerView>
+          <TextInput
+            text={userInput}
+            secureTextEntry={isEnteringPassword && !isShowingPassword}
+            onChangeText={this.handleUserInput.bind(this)}
+            margin={"0px"}
+            placeholder={placeholder} />
+
+          {isEnteringPassword && <ShowPasswordContainer>
+            <Button
+              small
+              text={"show"}
+              highlight={isShowingPassword}
+              color={colors.transparent}
+              onPress={this.showPassword.bind(this)} />
+          </ShowPasswordContainer>}
+        </InputContainerView>
 
         <Button
           text={"next"}
@@ -169,6 +194,16 @@ export default class SignUp extends React.Component<Props, State> {
     )
   }
 }
+
+const InputContainerView = styled.View`
+  position: relative;
+  margin: 30px 0px 20px 0px;
+`
+
+const ShowPasswordContainer = styled.View`
+  position: absolute;
+  right: 0;
+`
 
 const ContainerView = styled.View`
   flex: 1;
