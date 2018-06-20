@@ -86,7 +86,7 @@ interface TextProps {
 }
 
 const Text = styled.Text`
-  font-size: 18;
+  font-size: 20;
   color: ${(p: TextProps) => p.isCorrecting ? (p.correct ? colors.green : colors.red) : "black"};
   font-family: BrandonGrotesque-Regular;
   opacity: ${(p: TextProps) => p.missing ? 0 : 1};
