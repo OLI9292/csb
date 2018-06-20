@@ -5,6 +5,9 @@ import Prompt from './prompt'
 import Answer, { UserAnswer } from './answer'
 import Choices from './choices'
 import _ from "underscore"
+import { getUser } from "../../../Models/user"
+import { logQuestions } from "../../../Models/question"
+import { secondsDiff } from "../../../lib/helpers"
 
 export interface Props {
   question: any,
@@ -12,13 +15,32 @@ export interface Props {
   isInterlude: boolean
 }
 
+export interface QuestionLog {
+	questionCategory: string,
+	questionSubCategory: string,
+	questionIdentifier: string,
+	questionPrompt: string,
+	questionSecondaryPrompt: string,
+	startTime: Date,
+	endTime?: Date,
+	secondsTaken?: number,
+	guesses: string,
+	userId: string,
+	email: string,
+	correct: boolean,
+	finished: boolean  
+}
+
 interface State {
   question?: any,
+  user?: any,
+  startTime?: Date,
   opacityAnimation: Animated.Value,
   userAnswers: string[],
   choices: any[][],
   currentChoices: string[],
   choiceTree?: any,
+  questionsLog: QuestionLog[],
   isCorrecting: boolean
 }
 
@@ -35,6 +57,7 @@ export default class Question extends React.Component<Props, State> {
       currentChoices: [],
       choices: [],
       userAnswers: [],
+      questionsLog: [],
       opacityAnimation: new Animated.Value(1)
     }
 
@@ -42,13 +65,22 @@ export default class Question extends React.Component<Props, State> {
     this.choicesComponent = React.createRef()
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const user = await getUser() // TODO: - implement better state mgmt and remove
+    this.setState({ user })
     this.reset(this.props.question)
+  }
+
+  componentWillUnmount() {
+    logQuestions(this.state.questionsLog)
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.question && this.props.question !== nextProps.question) {
       Animated.timing(this.state.opacityAnimation, { toValue: 0, duration: 500 }).start()
+      
+      this.updateRecord("finished")
+
       this.nextQuestionTimeout = setTimeout(() => {  
         this.reset(nextProps.question)
         Animated.timing(this.state.opacityAnimation, { toValue: 1, duration: 500 }).start()
@@ -74,10 +106,57 @@ export default class Question extends React.Component<Props, State> {
     return { answers, tree }
   }
 
+  record(question: any) {
+    const {
+      user,
+      questionsLog
+    } = this.state
+
+    const mapText = (prompt: any[]) => prompt.map(c => c.value as string).join(" ")
+
+    const questionLog: QuestionLog = {
+      questionCategory: question.category,
+      questionSubCategory: question.subCategory,
+      questionIdentifier: question.identifier,
+      questionPrompt: mapText(question.prompt),
+      questionSecondaryPrompt: mapText(question.secondaryPrompt),
+      startTime: new Date(),
+      guesses: "",
+      userId: user._id,
+      email: user.email,
+      correct: true,
+      finished: false        
+    }
+
+    questionsLog.push(questionLog)
+    this.setState({ questionsLog })
+  }
+
+  updateRecord(attr: string, value?: string) {
+    const questionsLog = this.state.questionsLog
+    const log = _.last(questionsLog) as QuestionLog
+
+    if (attr === "guess") {
+      log.guesses.length && (log.guesses += "; ")
+      log.guesses += value
+    } else if (attr === "correct") {
+      log.correct = false
+    } else if (attr === "finished") {
+      log.finished = true
+      log.endTime = new Date()
+      log.secondsTaken = secondsDiff(log.startTime, log.endTime)
+    }
+
+    questionsLog[questionsLog.length - 1] = log
+    this.setState({ questionsLog })
+  }
+
   reset(question: any) {
     const choiceTree = question.choiceTreeJson && this.cleanChoiceTreeJson(question.choiceTreeJson)
+    this.record(question)
 
     this.setState({
+      startTime: new Date(),
       choiceTree: choiceTree,
       choices: question.choices,
       question: question,
@@ -135,18 +214,30 @@ export default class Question extends React.Component<Props, State> {
   }
 
   incorrectIndex(isUsingChoiceTree: boolean = true): number {
-    if (isUsingChoiceTree) {
-      const incorrect = (pair: string[]): boolean => pair[0] !== pair[1]
-      return _.findIndex(_.zip(this.state.userAnswers, this.state.choiceTree.answers), incorrect)
-    } else {
-      const { userAnswers, choices } = this.state
-      return _.findIndex(userAnswers, (a, idx) => 
+    const {
+      userAnswers,
+      choices,
+      choiceTree
+    } = this.state
+
+    const index = isUsingChoiceTree
+      ? 
+      _.findIndex(_.zip(userAnswers, choiceTree.answers), (pair: string[]): boolean => 
+        pair[0] !== pair[1])
+      : 
+      _.findIndex(userAnswers, (a: string, idx: number) => 
         !_.includes(choices[idx].filter(c => c.correct).map(c => c.value), a))
+
+    if (index > -1) {
+      this.updateRecord("correct")
     }
+
+    return index
   }
 
   guessed(value: string): void {  
     let { choiceTree, choices, isCorrecting, userAnswers } = this.state
+    this.updateRecord("guess", value)
 
     if (choiceTree) {
 
