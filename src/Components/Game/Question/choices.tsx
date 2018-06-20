@@ -15,6 +15,7 @@ export interface Props {
 }
 
 interface State {
+  throttled: boolean,
   hintAnimation: Animated.Value
 }
 
@@ -22,9 +23,28 @@ export default class Choices extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
       this.state = {
+      throttled: false,
       hintAnimation: new Animated.Value(0)
     }
   }  
+
+  componentWillReceiveProps(nextProps: Props) {
+    if (!_.isEqual(nextProps.data, this.props.data)) {
+      this.setState({ throttled: false })
+    }
+  }
+
+  throttleInput() {
+    this.setState({ throttled: true })
+    setTimeout(() => { this.setState({ throttled: false }) }, 1000)
+  }
+
+  guessed(value: string) {
+    if (!this.state.throttled) {
+      this.throttleInput()
+      this.props.guessed(value)  
+    }
+  }
 
   render() {
     const {
@@ -32,11 +52,16 @@ export default class Choices extends React.Component<Props, State> {
       isInterlude
     } = this.props
 
+    const {
+      throttled
+    } = this.state
+
     const choice = (value: string, idx: number) => <Button
       key={idx}
-      color={colors.blue}
+      disabled={throttled}
+      color={throttled ? colors.gray : colors.blue}
       underlayColor={colors.blue10l}
-      onPress={() => this.props.guessed(value)}>
+      onPress={() => this.guessed(value)}>
       <Text>
         {value.toUpperCase()}
       </Text>

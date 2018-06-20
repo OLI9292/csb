@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from "styled-components"
+import styled from "styled-components/native"
 
 import { colors, lighten10l } from '../../../lib/colors'
 
@@ -8,7 +8,7 @@ import Text from "../../Common/Text"
 import TextInput from "../../Common/TextInput"
 import { Step, InputText, textForStep } from "./data"
 import { validate } from "./validators"
-import { fetchUser, loginUser, createUser } from "../../../Models/user"
+import { fetchUser, loginUser, createUser, saveUser } from "../../../Models/user"
 
 interface Props {
   step: Step,
@@ -58,7 +58,7 @@ export default class SignUp extends React.Component<Props, State> {
     } else if (step === Step.Password) {
 
       this.setState({ isNetworking: true })
-      this.loginUser(email as string, userInput)
+      this.loginUser((email as string).toLowerCase(), userInput)
 
     } else if (step === Step.CreatePassword) {
 
@@ -68,7 +68,7 @@ export default class SignUp extends React.Component<Props, State> {
     } else if (step === Step.Username) {
       
       this.setState({ isNetworking: true })
-      this.createUser(email as string, password as string, userInput)
+      this.createUser((email as string).toLowerCase(), password as string, userInput)
 
     }
   }
@@ -83,11 +83,11 @@ export default class SignUp extends React.Component<Props, State> {
   }
 
   fetchUser(email: string) {
-    fetchUser(email)
+    fetchUser(email.toLowerCase())
       .then(res => {
         this.setState({ isNetworking: false })
         const step = res.success ? Step.Password : Step.CreatePassword
-        this.setState({ email: email })
+        this.setState({ email })
         this.nextStep(step)
       })
       .catch(e => this.setState({ error: "Something bad happened" }))
@@ -97,11 +97,9 @@ export default class SignUp extends React.Component<Props, State> {
     loginUser(email, password)
       .then(res => {
         this.setState({ isNetworking: false })
-        if (res.error) {
-          this.setState({ error: res.error })
-        } else {
-          // TODO: login
-        }
+        res.error
+          ? this.setState({ error: res.error })
+          : this.saveUserAndExit(email, password, res.user.username, res.user._id)
       })
       .catch(e => this.setState({ error: "Something bad happened" }))
   }
@@ -110,13 +108,16 @@ export default class SignUp extends React.Component<Props, State> {
     createUser(email, password, username)
       .then(res => {
         this.setState({ isNetworking: false })
-        if (res.error) {
-          this.setState({ error: res.error })
-        } else {
-          // TODO: login
-        }
+        res.error
+          ? this.setState({ error: res.error })
+          : this.saveUserAndExit(email, password, username, res._id)
       })
-      .catch(e => this.setState({ error: "Something bad happened" }))
+      .catch(e => { console.log(e); this.setState({ error: "Something bad happened" }) })
+  }
+
+  saveUserAndExit(email: string, password: string, username: string, _id: string) {
+    saveUser(email, password, username, _id)
+    this.props.navigator.dismissAllModals()
   }
   
   render() {

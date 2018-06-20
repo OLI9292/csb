@@ -7,6 +7,7 @@ import Button from '../Common/Button'
 import Header from '../Common/Header'
 
 import { fetchQuestions } from '../../Models/question'
+import { getUser } from "../../Models/user"
 import _ from "underscore"
 
 import mock from './mock'
@@ -36,23 +37,31 @@ export default class Solo extends React.Component<Props, State> {
     }
   }
 
-  async componentDidMount() {
-    const START_IMMEDIATELY = false
+  showWelcomeScreen() {
+    this.props.navigator.showModal({
+      screen: "example.WelcomeScreen",
+      animationType: "none",
+      navigatorStyle: { navBarHidden: true }
+    })    
+  }
 
+  loadData = async () => {
+    const START_IMMEDIATELY = true
     const questions = await fetchQuestions()
 
     if (questions.error) {
       console.log(questions.error)
     } else {
-      this.setState(
-        { questions },
-        () => {
-          if (START_IMMEDIATELY) {
-            this.selected("1.1.1", "oliver test","test")
-          }
-        }
-      )
+      this.setState({ questions }, () => {
+        if (START_IMMEDIATELY) { this.selected("1.1.1", "latin textbook","unit 2 morphology review test") } 
+      })
     }
+  }
+
+  async componentDidMount() {
+    const user = await getUser()
+    !user && this.showWelcomeScreen()
+    this.loadData()
   }
 
   selected(text: string, category?: string, subCategory?: string) {

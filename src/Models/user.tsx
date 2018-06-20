@@ -1,6 +1,24 @@
+import { AsyncStorage } from 'react-native'
+
 const API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/auth/user"
 const CREATE_API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/user"
 const LOGIN_API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/login"
+
+export async function getUser() {
+  const user = await AsyncStorage.getItem("@Storage:user")
+  if (user) {
+    return JSON.parse(user)
+  }
+}
+
+export function saveUser(email: string, password: string, username: string, _id: string) {
+  const user = JSON.stringify({ email, password, username, _id })
+  AsyncStorage.setItem("@Storage:user", user)
+}
+
+export function logoutUser() {
+  AsyncStorage.removeItem("@Storage:user")
+}
 
 export function fetchUser(email: string) {
   const query = "?email=" + email
@@ -35,9 +53,9 @@ export function createUser(email: string, password: string, username: string) {
     password: password,
     username: username,
     signUpMethod: "email",
-    firstName: "dummy" // TODO: - remove
+    firstName: username
   })
-  
+
   return fetch(CREATE_API_URL, {
     body: body,
     method: "POST",

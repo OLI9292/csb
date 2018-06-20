@@ -16,10 +16,9 @@ interface State {
   question?: any,
   opacityAnimation: Animated.Value,
   userAnswers: string[],
-  answers: string[],
+  choices: any[][],
   currentChoices: string[],
   choiceTree?: any,
-  layer: number,
   isCorrecting: boolean
 }
 
@@ -33,9 +32,8 @@ export default class Question extends React.Component<Props, State> {
 
     this.state = {
       isCorrecting: false,
-      answers: [],
       currentChoices: [],
-      layer: 0,
+      choices: [],
       userAnswers: [],
       opacityAnimation: new Animated.Value(1)
     }
@@ -58,14 +56,30 @@ export default class Question extends React.Component<Props, State> {
     }
   }
 
+  cleanChoiceTreeJson(json: any) {
+    const choiceTree = JSON.parse(json)
+
+    const clean = (obj: any): any => {
+      if (obj.branches) {
+        return clean(obj.branches)
+      } else if (_.isEmpty(obj)) {
+        return undefined
+      } else {
+        return _.mapObject(obj, (v, k) => clean(v))
+      }
+    }
+
+    const tree = clean(choiceTree.tree)
+    const answers = choiceTree.answers.slice(1)
+    return { answers, tree }
+  }
+
   reset(question: any) {
-    const choiceTree = question.choiceTreeJson && JSON.parse(question.choiceTreeJson)
-    let answers = choiceTree.answers
-    answers.shift()
+    const choiceTree = question.choiceTreeJson && this.cleanChoiceTreeJson(question.choiceTreeJson)
 
     this.setState({
       choiceTree: choiceTree,
-      answers: answers,
+      choices: question.choices,
       question: question,
       isCorrecting: false,
       userAnswers: []
@@ -73,78 +87,93 @@ export default class Question extends React.Component<Props, State> {
   }
 
   checkInput() {
-    let { choiceTree } = this.state
-    let tree = this.state.choiceTree.tree
-    let userAnswers = _.clone(this.state.userAnswers)
-    let answers = _.clone(this.state.answers)
-
-    while (userAnswers.length) {
-      if (this.state.isCorrecting) {
-        const correct = userAnswers[0] === answers[0]
-        if (correct) {
-          tree = tree.branches[userAnswers[0]]
-          userAnswers.shift()
-          answers.shift()  
-        } else {
-          userAnswers = []
-        }
-      } else {
-        tree = tree.branches[userAnswers[0]]
-        userAnswers.shift()  
-      }
-    }
-    
-    if (tree.branches) {
-      const currentChoices = _.keys(tree.branches)
-      this.setState({ currentChoices })
-    } else {
-      if (this.questionDone()) {
-        console.log("questionDone2")
-        this.setState({ isCorrecting: true }, this.props.questionDone)
-      } else {
-        this.setState({ isCorrecting: true }, this.checkInput)        
-      }
-    }
-  }
-
-  questionDone() {
-    return this.incorrectIndex() === -1
-  }
-
-  incorrectIndex() {
-    const incorrect = (pair: string[]): boolean => pair[0] !== pair[1]
-    return _.findIndex(_.zip(this.state.userAnswers, this.state.answers), incorrect)
-  }
-
-  guessed(value: string) {  
-    let {
-      choiceTree,
-      isCorrecting,
-      userAnswers
-    } = this.state
+    let { choiceTree, choices, userAnswers } = this.state
 
     if (choiceTree) {
+      let { answers, tree } = choiceTree
+      
+      while (userAnswers.length) {
+        const stop = 
+          this.state.isCorrecting &&
+          userAnswers[0] !== answers[0]
+        if (stop) { break }
+        tree = tree[userAnswers[0]]
+        userAnswers = userAnswers.slice(1)
+        answers = answers.slice(1)
+      }
+  
+      if (tree) {
+        const currentChoices = _.keys(tree)
+        this.setState({ currentChoices })
+      } else {
+        this.setState(
+          { isCorrecting: true },
+          () => this.questionDone() ? this.props.questionDone() : this.checkInput()
+        )
+      }
+
+    } else if (choices) {
+
+      const layer = choices[this.state.isCorrecting 
+        ? this.incorrectIndex(false)
+        : userAnswers.length]
+
+      if (layer) {
+        const currentChoices = layer.map(c => c.value)
+        this.setState({ currentChoices })  
+      } else {
+        this.setState(
+          { isCorrecting: true },
+          () => this.questionDone(false) ? this.props.questionDone() : this.checkInput()
+        )
+      }
+    }
+  }
+
+  questionDone(isUsingChoiceTree: boolean = true): boolean {
+    return this.incorrectIndex(isUsingChoiceTree) === -1
+  }
+
+  incorrectIndex(isUsingChoiceTree: boolean = true): number {
+    if (isUsingChoiceTree) {
+      const incorrect = (pair: string[]): boolean => pair[0] !== pair[1]
+      return _.findIndex(_.zip(this.state.userAnswers, this.state.choiceTree.answers), incorrect)
+    } else {
+      const { userAnswers, choices } = this.state
+      return _.findIndex(userAnswers, (a, idx) => 
+        !_.includes(choices[idx].filter(c => c.correct).map(c => c.value), a))
+    }
+  }
+
+  guessed(value: string): void {  
+    let { choiceTree, choices, isCorrecting, userAnswers } = this.state
+
+    if (choiceTree) {
+
       if (isCorrecting) {
         const incorrectIndex = this.incorrectIndex()
         userAnswers[incorrectIndex] = value
-        if (this.questionDone()) {
-          this.setState({ userAnswers }, this.props.questionDone)
-        } else {
-          this.setState({ userAnswers }, this.checkInput)
-        }
+        isCorrecting = incorrectIndex !== userAnswers.length - 1
       } else {
-        userAnswers = userAnswers.concat(value)
-        this.setState({ userAnswers }, this.checkInput)  
+        userAnswers[userAnswers.length] = value
       }
+      
+      this.setState({ isCorrecting, userAnswers }, this.checkInput)
+
+    } else if (choices) {
+
+      userAnswers[isCorrecting ? this.incorrectIndex(false) : userAnswers.length] = value
+      this.setState({ userAnswers }, this.checkInput)
+      
     }
   }
 
   render() {
     const {
-      layer,
       userAnswers,
       question,
       choiceTree,
+      choices,
       isCorrecting,
       currentChoices
     } = this.state
@@ -170,6 +199,7 @@ export default class Question extends React.Component<Props, State> {
         <Answer
           isCorrecting={isCorrecting}
           choiceTree={choiceTree}
+          choices={choices}
           userAnswers={userAnswers} />          
 
         <Choices
