@@ -94,15 +94,15 @@ export default class Question extends React.Component<Props, State> {
     const clean = (obj: any): any => {
       if (obj.branches) {
         return clean(obj.branches)
-      } else if (_.isEmpty(obj)) {
+      } else if (_.isEmpty(obj) || _.isEqual(_.keys(obj), ["choiceSetId"])) {
         return undefined
       } else {
         return _.mapObject(obj, (v, k) => clean(v))
       }
     }
 
-    const tree = clean(choiceTree.tree)
     const answers = choiceTree.answers.slice(1)
+    const tree = clean(choiceTree.tree)
     return { answers, tree }
   }
 

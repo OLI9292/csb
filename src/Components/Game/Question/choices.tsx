@@ -36,7 +36,7 @@ export default class Choices extends React.Component<Props, State> {
 
   throttleInput() {
     this.setState({ throttled: true })
-    setTimeout(() => { this.setState({ throttled: false }) }, 1000)
+    setTimeout(() => { this.setState({ throttled: false }) }, 2000)
   }
 
   guessed(value: string) {
@@ -110,5 +110,5 @@ const Button = styled.TouchableHighlight`
 const Text = styled.Text`
   color: white; 
   font-family: BrandonGrotesque-Regular;
-  font-size: 12px;
+  font-size: 14px;
 `;
