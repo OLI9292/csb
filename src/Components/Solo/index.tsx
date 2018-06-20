@@ -46,7 +46,7 @@ export default class Solo extends React.Component<Props, State> {
   }
 
   loadData = async () => {
-    const START_IMMEDIATELY = true
+    const START_IMMEDIATELY = false
     const questions = await fetchQuestions()
 
     if (questions.error) {
@@ -60,7 +60,10 @@ export default class Solo extends React.Component<Props, State> {
 
   async componentDidMount() {
     const user = await getUser()
-    !user && this.showWelcomeScreen()
+    console.log(user)
+    if (!user) {
+      this.showWelcomeScreen()
+    }
     this.loadData()
   }
 

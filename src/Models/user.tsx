@@ -23,8 +23,6 @@ export function logoutUser() {
 export function fetchUser(email: string) {
   const query = "?email=" + email
   const url = API_URL + query
-
-  console.log(url)
   
   return fetch(url)
     .then(res => res.json())
