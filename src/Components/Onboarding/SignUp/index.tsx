@@ -1,8 +1,8 @@
-import React from 'react'
+import React from "react"
 import styled from "styled-components/native"
 import _ from "underscore"
 
-import { colors, lighten10l } from '../../../lib/colors'
+import { colors, lighten10l } from "../../../lib/colors"
 
 import Button from "../../Common/Button"
 import Text from "../../Common/Text"
@@ -12,19 +12,19 @@ import { validate } from "./validators"
 import { fetchUser, loginUser, createUser, saveUser } from "../../../Models/user"
 
 interface Props {
-  step: Step,
+  step: Step
   navigator: any
 }
 
 interface State {
-  step: Step,
-  userInput: string,
-  userInputValid: boolean,
-  error?: string,
-  email?: string,
-  password?: string,
-  username?: string,
-  isNetworking: boolean,
+  step: Step
+  userInput: string
+  userInputValid: boolean
+  error?: string
+  email?: string
+  password?: string
+  username?: string
+  isNetworking: boolean
   isShowingPassword: boolean
 }
 
@@ -36,7 +36,7 @@ export default class SignUp extends React.Component<Props, State> {
       userInputValid: false,
       userInput: "",
       isShowingPassword: false,
-      isNetworking: false
+      isNetworking: false,
     }
   }
 
@@ -50,29 +50,19 @@ export default class SignUp extends React.Component<Props, State> {
     const [userInputValid, error] = validate(userInput, step)
 
     if (!userInputValid) {
-      
       this.setState({ error })
-      
     } else if (step === Step.Email) {
-      
       this.setState({ isNetworking: true })
       this.fetchUser(userInput)
-
     } else if (step === Step.Password) {
-
       this.setState({ isNetworking: true })
       this.loginUser((email as string).toLowerCase(), userInput)
-
     } else if (step === Step.CreatePassword) {
-
       this.setState({ password: userInput })
       this.nextStep(Step.Username)
-
     } else if (step === Step.Username) {
-      
       this.setState({ isNetworking: true })
       this.createUser((email as string).toLowerCase(), password as string, userInput)
-
     }
   }
 
@@ -82,7 +72,7 @@ export default class SignUp extends React.Component<Props, State> {
       userInput: "",
       userInputValid: false,
       isShowingPassword: false,
-      error: undefined
+      error: undefined,
     })
   }
 
@@ -112,11 +102,12 @@ export default class SignUp extends React.Component<Props, State> {
     createUser(email, password, username)
       .then(res => {
         this.setState({ isNetworking: false })
-        res.error
-          ? this.setState({ error: res.error })
-          : this.saveUserAndExit(email, password, username, res._id)
+        res.error ? this.setState({ error: res.error }) : this.saveUserAndExit(email, password, username, res._id)
       })
-      .catch(e => { console.log(e); this.setState({ error: "Something bad happened" }) })
+      .catch(e => {
+        console.log(e)
+        this.setState({ error: "Something bad happened" })
+      })
   }
 
   saveUserAndExit(email: string, password: string, username: string, _id: string) {
@@ -128,37 +119,21 @@ export default class SignUp extends React.Component<Props, State> {
     const isShowingPassword = !this.state.isShowingPassword
     this.setState({ isShowingPassword })
   }
-  
-  render() {
-    const {
-      step,
-      userInput,
-      userInputValid,
-      error,
-      isShowingPassword,
-      isNetworking
-    } = this.state
 
-    const {
-      header,
-      subheader,
-      placeholder
-    } = textForStep(step)
+  render() {
+    const { step, userInput, userInputValid, error, isShowingPassword, isNetworking } = this.state
+
+    const { header, subheader, placeholder } = textForStep(step)
 
     const isEnteringPassword = _.includes([1, 2], step)
 
     return (
       <ContainerView>
-        <Text.xxl>
-          {header}
-        </Text.xxl>
+        <Text.xxl>{header}</Text.xxl>
 
-        <Text.m
-          color={colors.gray}
-          margin={"10px 0px"}>
+        <Text.m color={colors.gray} margin={"10px 0px"}>
           {subheader}
         </Text.m>
-
 
         <InputContainerView>
           <TextInput
@@ -166,28 +141,31 @@ export default class SignUp extends React.Component<Props, State> {
             secureTextEntry={isEnteringPassword && !isShowingPassword}
             onChangeText={this.handleUserInput.bind(this)}
             margin={"0px"}
-            placeholder={placeholder} />
+            placeholder={placeholder}
+          />
 
-          {isEnteringPassword && <ShowPasswordContainer>
-            <Button
-              small
-              text={"show"}
-              highlight={isShowingPassword}
-              color={colors.transparent}
-              onPress={this.showPassword.bind(this)} />
-          </ShowPasswordContainer>}
+          {isEnteringPassword && (
+            <ShowPasswordContainer>
+              <Button
+                small
+                text={"show"}
+                highlight={isShowingPassword}
+                color={colors.transparent}
+                onPress={this.showPassword.bind(this)}
+              />
+            </ShowPasswordContainer>
+          )}
         </InputContainerView>
 
         <Button
           text={"next"}
           margin={"0 auto"}
           disabled={!userInputValid || isNetworking}
-          color={(userInputValid && !isNetworking) ? colors.blue : colors.gray}
-          onPress={this.continue.bind(this)} />
+          color={userInputValid && !isNetworking ? colors.blue : colors.gray}
+          onPress={this.continue.bind(this)}
+        />
 
-        <Text.m 
-          error
-          margin={"20px 0px 0px 0px"}>
+        <Text.m error margin={"20px 0px 0px 0px"}>
           {error}
         </Text.m>
       </ContainerView>
@@ -210,4 +188,4 @@ const ContainerView = styled.View`
   width: 92.5%;
   margin: 0 auto;
   margin-top: 40px;
-`;
+`

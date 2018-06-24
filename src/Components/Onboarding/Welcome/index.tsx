@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react"
 import styled from "styled-components/native"
 
-import { colors, lighten10l } from '../../../lib/colors'
+import { colors, lighten10l } from "../../../lib/colors"
 import Button from "../../Common/Button"
 import Text from "../../Common/Text"
 
@@ -23,32 +23,24 @@ export default class Welcome extends React.Component<Props, State> {
       animationType: "none",
       passProps: { step: "email" },
       navigatorStyle: {
-        navBarHidden: true
-      }
-    })    
+        navBarHidden: true,
+      },
+    })
   }
-  
+
   render() {
     return (
       <ContainerView>
-        <WordcraftHeader>
-          WORDCRAFT
-        </WordcraftHeader>
+        <WordcraftHeader>WORDCRAFT</WordcraftHeader>
 
         <ImageContainer>
-          <Image
-            source={require("../../../lib/assets/images/animals.png")} />
+          <Image source={require("../../../lib/assets/images/animals.png")} />
         </ImageContainer>
- 
-        <BottomContainer>
-          <Text.l>
-            Learn the world.
-          </Text.l>
 
-        <Button
-          text={"get started"}
-          color={colors.green}
-          onPress={this.continue.bind(this)} />   
+        <BottomContainer>
+          <Text.l>Learn the world.</Text.l>
+
+          <Button text={"get started"} color={colors.green} onPress={this.continue.bind(this)} />
         </BottomContainer>
       </ContainerView>
     )
