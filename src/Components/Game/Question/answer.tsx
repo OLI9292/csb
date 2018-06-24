@@ -1,19 +1,19 @@
-import React from 'react'
+import React from "react"
 import styled from "styled-components/native"
-import { colors, lighten10l } from '../../../lib/colors'
-import { validate } from '../../Onboarding/SignUp/validators';
-import Choices from './choices'
+import { colors, lighten10l } from "../../../lib/colors"
+import { validate } from "../../Onboarding/SignUp/validators"
+import Choices from "./choices"
 import _ from "underscore"
 
 export interface UserAnswer {
-  correct: boolean,
+  correct: boolean
   value: string
 }
 
 export interface Props {
-  userAnswers: string[],
-  choiceTree?: any,
-  choices?: any[][],
+  userAnswers: string[]
+  choiceTree?: any
+  choices?: any[][]
   isCorrecting: boolean
 }
 
@@ -30,36 +30,28 @@ export default class Answer extends React.Component<Props, State> {
     if (choiceTree) {
       return value === choiceTree.answers[idx]
     } else if (choices) {
-      return _.includes(choices[idx]
-        .filter(c => c.correct)
-        .map(c => c.value), value)     
+      return _.includes(choices[idx].filter(c => c.correct).map(c => c.value), value)
     }
   }
 
   render() {
-    const {
-      userAnswers,
-      isCorrecting
-    } = this.props
+    const { userAnswers, isCorrecting } = this.props
 
-    const answer = (value: string, idx: number): JSX.Element => <Text 
-      correct={this.correct(value, idx)}
-      isCorrecting={isCorrecting}
-      key={value}>
-      {value}
-    </Text>
+    const answer = (value: string, idx: number): JSX.Element => (
+      <Text correct={this.correct(value, idx)} isCorrecting={isCorrecting} key={value}>
+        {value}
+      </Text>
+    )
 
-    const separator = (idx: number): JSX.Element => <Text key={idx}>, </Text> 
-    
+    const separator = (idx: number): JSX.Element => <Text key={idx}>, </Text>
+
     return (
       <ContainerView>
-        {
-          userAnswers
-            .map((a, i) => answer(a, i))
-            .reduce((accu: (JSX.Element | null)[] | null, elem: JSX.Element | null, idx: number) => {
-              return accu === null ? [elem] : [...accu, separator(idx), elem]
-            }, null)
-        }    
+        {userAnswers
+          .map((a, i) => answer(a, i))
+          .reduce((accu: (JSX.Element | null)[] | null, elem: JSX.Element | null, idx: number) => {
+            return accu === null ? [elem] : [...accu, separator(idx), elem]
+          }, null)}
       </ContainerView>
     )
   }
@@ -80,14 +72,14 @@ const ContainerView = styled.View`
 `
 
 interface TextProps {
-  missing: boolean,
-  correct?: boolean,
+  missing: boolean
+  correct?: boolean
   isCorrecting?: boolean
 }
 
 const Text = styled.Text`
   font-size: 20;
-  color: ${(p: TextProps) => p.isCorrecting ? (p.correct ? colors.green : colors.red) : "black"};
+  color: ${(p: TextProps) => (p.isCorrecting ? (p.correct ? colors.green : colors.red) : "black")};
   font-family: BrandonGrotesque-Regular;
-  opacity: ${(p: TextProps) => p.missing ? 0 : 1};
+  opacity: ${(p: TextProps) => (p.missing ? 0 : 1)};
 `

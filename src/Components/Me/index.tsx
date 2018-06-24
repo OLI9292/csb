@@ -1,11 +1,11 @@
-import React from 'react'
-import { Component } from 'react'
+import React from "react"
+import { Component } from "react"
 import styled from "styled-components/native"
 
 import { getUser, logoutUser } from "../../Models/user"
 import Text from "../Common/Text"
 import Button from "../Common/Button"
-import { colors } from '../../lib/colors'
+import { colors } from "../../lib/colors"
 
 export interface Props {
   navigator: any
@@ -19,7 +19,7 @@ export default class Me extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {}
-    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
 
   componentDidMount() {
@@ -31,7 +31,9 @@ export default class Me extends React.Component<Props, State> {
   }
 
   loadUser = async () => {
-    if (this.state.user) { return }
+    if (this.state.user) {
+      return
+    }
     const user = await getUser()
     user && this.setState({ user })
   }
@@ -46,14 +48,12 @@ export default class Me extends React.Component<Props, State> {
     this.props.navigator.showModal({
       screen: "example.WelcomeScreen",
       animationType: "none",
-      navigatorStyle: { navBarHidden: true }
-    })    
+      navigatorStyle: { navBarHidden: true },
+    })
   }
 
   render() {
-    const {
-      user
-    } = this.state
+    const { user } = this.state
 
     if (!user) {
       return null
@@ -61,21 +61,18 @@ export default class Me extends React.Component<Props, State> {
 
     return (
       <ContainerView>
-        <Text.l>
-          {user.username}
-        </Text.l>
-        <Text.m color={colors.gray}>
-          {user.email}
-        </Text.m>
+        <Text.l>{user.username}</Text.l>
+        <Text.m color={colors.gray}>{user.email}</Text.m>
 
         <Button
           onPress={this.logout.bind(this)}
           margin={"10px 0px 0px 0px"}
           color={colors.white}
           small={true}
-          text={"logout"} />
+          text={"logout"}
+        />
       </ContainerView>
-    );
+    )
   }
 }
 
@@ -83,4 +80,4 @@ const ContainerView = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-`;
+`

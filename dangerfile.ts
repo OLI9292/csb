@@ -16,8 +16,7 @@ const trivialPR = bodyAndTitle.includes("#trivial")
 const typescriptOnly = (file: string) => includes(file, ".ts")
 const filesOnly = (file: string) => fs.existsSync(file) && fs.lstatSync(file).isFile()
 
-const modifiedAppFiles = modified
-  .filter(p => filesOnly(p) && typescriptOnly(p))
+const modifiedAppFiles = modified.filter(p => filesOnly(p) && typescriptOnly(p))
 
 // When there are app-changes and it's not a PR marked as trivial, expect
 // there to be CHANGELOG changes.

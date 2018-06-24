@@ -1,46 +1,47 @@
-import React from 'react'
+import React from "react"
 import { Animated } from "react-native"
 
-import Prompt from './prompt'
-import Answer, { UserAnswer } from './answer'
-import Choices from './choices'
+import Prompt from "./prompt"
+import Answer, { UserAnswer } from "./answer"
+import Choices from "./choices"
 import _ from "underscore"
-import { getUser } from "../../../Models/user"
+import { getUser, logQuestionHistory } from "../../../Models/user"
 import { logQuestions } from "../../../Models/question"
 import { secondsDiff } from "../../../lib/helpers"
 
 export interface Props {
-  question: any,
-  questionDone: () => void,
+  question: any
+  questionDone: () => void
   isInterlude: boolean
 }
 
 export interface QuestionLog {
-	questionCategory: string,
-	questionSubCategory: string,
-	questionIdentifier: string,
-	questionPrompt: string,
-	questionSecondaryPrompt: string,
-	startTime: Date,
-	endTime?: Date,
-	secondsTaken?: number,
-	guesses: string,
-	userId: string,
-	email: string,
-	correct: boolean,
-	finished: boolean  
+  id: string
+  questionCategory: string
+  questionSubCategory: string
+  questionIdentifier: string
+  questionPrompt: string
+  questionSecondaryPrompt: string
+  startTime: Date
+  endTime?: Date
+  secondsTaken?: number
+  guesses: string
+  userId: string
+  email: string
+  correct: boolean
+  finished: boolean
 }
 
 interface State {
-  question?: any,
-  user?: any,
-  startTime?: Date,
-  opacityAnimation: Animated.Value,
-  userAnswers: string[],
-  choices: any[][],
-  currentChoices: string[],
-  choiceTree?: any,
-  questionsLog: QuestionLog[],
+  question?: any
+  user?: any
+  startTime?: Date
+  opacityAnimation: Animated.Value
+  userAnswers: string[]
+  choices: any[][]
+  currentChoices: string[]
+  choiceTree?: any
+  questionsLog: QuestionLog[]
   isCorrecting: boolean
 }
 
@@ -58,7 +59,7 @@ export default class Question extends React.Component<Props, State> {
       choices: [],
       userAnswers: [],
       questionsLog: [],
-      opacityAnimation: new Animated.Value(1)
+      opacityAnimation: new Animated.Value(1),
     }
 
     this.promptComponent = React.createRef()
@@ -72,16 +73,28 @@ export default class Question extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    logQuestions(this.state.questionsLog)
+    const questionsLog = this.state.questionsLog
+    if (questionsLog.length === 0) {
+      return
+    }
+
+    // Save in question 2 table
+    logQuestions(questionsLog)
+
+    // Save under user model
+    const _id = this.state.user._id
+    const question2History = questionsLog.filter(q => q.finished).map(q => ({ id: q.id, perfect: q.correct }))
+    console.log(question2History.length)
+    logQuestionHistory(JSON.stringify({ _id, question2History }))
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.question && this.props.question !== nextProps.question) {
       Animated.timing(this.state.opacityAnimation, { toValue: 0, duration: 500 }).start()
-      
+
       this.updateRecord("finished")
 
-      this.nextQuestionTimeout = setTimeout(() => {  
+      this.nextQuestionTimeout = setTimeout(() => {
         this.reset(nextProps.question)
         Animated.timing(this.state.opacityAnimation, { toValue: 1, duration: 500 }).start()
       }, 500)
@@ -107,14 +120,13 @@ export default class Question extends React.Component<Props, State> {
   }
 
   record(question: any) {
-    const {
-      user,
-      questionsLog
-    } = this.state
+    const { user, questionsLog } = this.state
 
-    const mapText = (prompt: any[]) => prompt.map(c => c.value as string).join(" ")
+    const mapText = (prompt: any[]) =>
+      prompt.map(c => (c.highlight ? `***${c.value as string}***` : (c.value as string))).join(" ")
 
     const questionLog: QuestionLog = {
+      id: question._id,
       questionCategory: question.category,
       questionSubCategory: question.subCategory,
       questionIdentifier: question.identifier,
@@ -125,7 +137,7 @@ export default class Question extends React.Component<Props, State> {
       userId: user._id,
       email: user.email,
       correct: true,
-      finished: false        
+      finished: false,
     }
 
     questionsLog.push(questionLog)
@@ -155,14 +167,17 @@ export default class Question extends React.Component<Props, State> {
     const choiceTree = question.choiceTreeJson && this.cleanChoiceTreeJson(question.choiceTreeJson)
     this.record(question)
 
-    this.setState({
-      startTime: new Date(),
-      choiceTree: choiceTree,
-      choices: question.choices,
-      question: question,
-      isCorrecting: false,
-      userAnswers: []
-    }, this.checkInput)
+    this.setState(
+      {
+        startTime: new Date(),
+        choiceTree: choiceTree,
+        choices: question.choices,
+        question: question,
+        isCorrecting: false,
+        userAnswers: [],
+      },
+      this.checkInput
+    )
   }
 
   checkInput() {
@@ -170,40 +185,36 @@ export default class Question extends React.Component<Props, State> {
 
     if (choiceTree) {
       let { answers, tree } = choiceTree
-      
+
       while (userAnswers.length) {
-        const stop = 
-          this.state.isCorrecting &&
-          userAnswers[0] !== answers[0]
-        if (stop) { break }
+        const stop = this.state.isCorrecting && userAnswers[0] !== answers[0]
+        if (stop) {
+          break
+        }
         tree = tree[userAnswers[0]]
         userAnswers = userAnswers.slice(1)
         answers = answers.slice(1)
       }
-  
+
       if (tree) {
         const currentChoices = _.keys(tree)
         this.setState({ currentChoices })
       } else {
         this.setState(
           { isCorrecting: true },
-          () => this.questionDone() ? this.props.questionDone() : this.checkInput()
+          () => (this.questionDone() ? this.props.questionDone() : this.checkInput())
         )
       }
-
     } else if (choices) {
-
-      const layer = choices[this.state.isCorrecting 
-        ? this.incorrectIndex(false)
-        : userAnswers.length]
+      const layer = choices[this.state.isCorrecting ? this.incorrectIndex(false) : userAnswers.length]
 
       if (layer) {
         const currentChoices = layer.map(c => c.value)
-        this.setState({ currentChoices })  
+        this.setState({ currentChoices })
       } else {
         this.setState(
           { isCorrecting: true },
-          () => this.questionDone(false) ? this.props.questionDone() : this.checkInput()
+          () => (this.questionDone(false) ? this.props.questionDone() : this.checkInput())
         )
       }
     }
@@ -214,33 +225,37 @@ export default class Question extends React.Component<Props, State> {
   }
 
   incorrectIndex(isUsingChoiceTree: boolean = true): number {
-    const {
-      userAnswers,
-      choices,
-      choiceTree
-    } = this.state
+    const { userAnswers, choices, choiceTree } = this.state
 
-    const index = isUsingChoiceTree
-      ? 
-      _.findIndex(_.zip(userAnswers, choiceTree.answers), (pair: string[]): boolean => 
-        pair[0] !== pair[1])
-      : 
-      _.findIndex(userAnswers, (a: string, idx: number) => 
-        !_.includes(choices[idx].filter(c => c.correct).map(c => c.value), a))
+    let index, slicedUserAnswers
 
-    if (index > -1) {
+    if (isUsingChoiceTree) {
+      slicedUserAnswers = userAnswers.slice(0, choiceTree.answers.length)
+      index = _.findIndex(
+        _.zip(slicedUserAnswers, choiceTree.answers),
+        (pair: string[]): boolean => pair[0] !== pair[1]
+      )
+    } else {
+      index = _.findIndex(
+        userAnswers,
+        (a: string, idx: number) => !_.includes(choices[idx].filter(c => c.correct).map(c => c.value), a)
+      )
+    }
+
+    if (index === -1 && isUsingChoiceTree) {
+      this.setState({ userAnswers: slicedUserAnswers || userAnswers })
+    } else {
       this.updateRecord("correct")
     }
 
     return index
   }
 
-  guessed(value: string): void {  
+  guessed(value: string): void {
     let { choiceTree, choices, isCorrecting, userAnswers } = this.state
     this.updateRecord("guess", value)
 
     if (choiceTree) {
-
       if (isCorrecting) {
         const incorrectIndex = this.incorrectIndex()
         userAnswers[incorrectIndex] = value
@@ -248,56 +263,43 @@ export default class Question extends React.Component<Props, State> {
       } else {
         userAnswers[userAnswers.length] = value
       }
-      
+
       this.setState({ isCorrecting, userAnswers }, this.checkInput)
-
     } else if (choices) {
-
       userAnswers[isCorrecting ? this.incorrectIndex(false) : userAnswers.length] = value
       this.setState({ userAnswers }, this.checkInput)
-      
     }
   }
 
   render() {
-    const {
-      userAnswers,
-      question,
-      choiceTree,
-      choices,
-      isCorrecting,
-      currentChoices
-    } = this.state
+    const { userAnswers, question, choiceTree, choices, isCorrecting, currentChoices } = this.state
 
-    if (!question) { 
+    if (!question) {
       return null
     }
 
     return (
-      <Animated.View style={[{
-        opacity: this.state.opacityAnimation,
-        flex: 12,
-        alignSelf: "stretch",
-        marginLeft: 10,
-        marginRight: 10
-        }]}>
-        
-        <Prompt
-          ref={this.promptComponent}
-          prompt={question.prompt}
-          secondaryPrompt={question.secondaryPrompt} />
+      <Animated.View
+        style={[
+          {
+            opacity: this.state.opacityAnimation,
+            flex: 12,
+            alignSelf: "stretch",
+            marginLeft: 10,
+            marginRight: 10,
+          },
+        ]}
+      >
+        <Prompt ref={this.promptComponent} prompt={question.prompt} secondaryPrompt={question.secondaryPrompt} />
 
-        <Answer
-          isCorrecting={isCorrecting}
-          choiceTree={choiceTree}
-          choices={choices}
-          userAnswers={userAnswers} />          
+        <Answer isCorrecting={isCorrecting} choiceTree={choiceTree} choices={choices} userAnswers={userAnswers} />
 
         <Choices
           isInterlude={this.props.isInterlude}
           ref={this.choicesComponent}
           data={currentChoices}
-          guessed={this.guessed.bind(this)} />
+          guessed={this.guessed.bind(this)}
+        />
       </Animated.View>
     )
   }

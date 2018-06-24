@@ -1,4 +1,4 @@
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage } from "react-native"
 
 const API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/auth/user"
 const CREATE_API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/user"
@@ -23,8 +23,21 @@ export function logoutUser() {
 export function fetchUser(email: string) {
   const query = "?email=" + email
   const url = API_URL + query
-  
+
   return fetch(url)
+    .then(res => res.json())
+    .then(json => json)
+    .catch(e => console.log(e))
+}
+
+export function logQuestionHistory(body: any) {
+  const url = API_URL + "/completedQuestions"
+
+  return fetch(url, {
+    body: body,
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+  })
     .then(res => res.json())
     .then(json => json)
     .catch(e => console.log(e))
@@ -33,15 +46,15 @@ export function fetchUser(email: string) {
 export function loginUser(email: string, password: string) {
   const url = LOGIN_API_URL
   const body = JSON.stringify({ email: email, password: password })
-  
+
   return fetch(LOGIN_API_URL, {
     body: body,
     method: "POST",
-    headers: { "content-type": "application/json" }
+    headers: { "content-type": "application/json" },
   })
-  .then(res => res.json())
-  .then(json => json)
-  .catch(e => console.log(e))
+    .then(res => res.json())
+    .then(json => json)
+    .catch(e => console.log(e))
 }
 
 export function createUser(email: string, password: string, username: string) {
@@ -51,15 +64,15 @@ export function createUser(email: string, password: string, username: string) {
     password: password,
     username: username,
     signUpMethod: "email",
-    firstName: username
+    firstName: username,
   })
 
   return fetch(CREATE_API_URL, {
     body: body,
     method: "POST",
-    headers: { "content-type": "application/json" }
+    headers: { "content-type": "application/json" },
   })
-  .then(res => res.json())
-  .then(json => json)
-  .catch(e => console.log(e))  
+    .then(res => res.json())
+    .then(json => json)
+    .catch(e => console.log(e))
 }

@@ -1,18 +1,18 @@
-import React from 'react'
+import React from "react"
 import styled from "styled-components/native"
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
-import { colors, lighten10l } from '../../lib/colors'
-import Question from './Question/index'
-import ProgressBar from './progressBar'
+import { colors, lighten10l } from "../../lib/colors"
+import Question from "./Question/index"
+import ProgressBar from "./progressBar"
 
 export interface Props {
-  questions: any[],
+  questions: any[]
   navigator: any
 }
 
 interface State {
-  questionIndex: number,
+  questionIndex: number
   questionDone: boolean
 }
 
@@ -21,7 +21,7 @@ export default class Game extends React.Component<Props, State> {
     super(props)
     this.state = {
       questionIndex: 0,
-      questionDone: false
+      questionDone: false,
     }
   }
 
@@ -31,10 +31,10 @@ export default class Game extends React.Component<Props, State> {
 
   nextQuestion() {
     const questionIndex = this.state.questionIndex + 1
-    
+
     this.setState({
       questionIndex: questionIndex,
-      questionDone: false
+      questionDone: false,
     })
 
     if (questionIndex === this.props.questions.length) {
@@ -44,33 +44,23 @@ export default class Game extends React.Component<Props, State> {
 
   exitGame() {
     this.props.navigator.dismissModal({
-      animationType: "none"
+      animationType: "none",
     })
   }
 
   render() {
-    const {
-      questionIndex,
-      questionDone
-    } = this.state
+    const { questionIndex, questionDone } = this.state
 
-    const {
-      questions
-    } = this.props
+    const { questions } = this.props
 
     return (
       <ContainerView>
         <TopContainerView>
           <FlexedView>
-            <Icon
-              onPress={this.exitGame.bind(this)}
-              name="exit-to-app"
-              size={30}
-              color={colors.lightGray} />
+            <Icon onPress={this.exitGame.bind(this)} name="exit-to-app" size={30} color={colors.lightGray} />
           </FlexedView>
 
-          <ProgressBar
-            completion={questionIndex / questions.length} />
+          <ProgressBar completion={questionIndex / questions.length} />
 
           <FlexedView />
         </TopContainerView>
@@ -78,18 +68,14 @@ export default class Game extends React.Component<Props, State> {
         <Question
           isInterlude={questionDone}
           questionDone={this.questionDone.bind(this)}
-          question={questions[questionIndex]} />
+          question={questions[questionIndex]}
+        />
 
-        {
-          questionDone &&
-          <Button
-            underlayColor={colors.green10l}
-            onPress={this.nextQuestion.bind(this)}>
-            <Text>
-              CONTINUE
-            </Text>
+        {questionDone && (
+          <Button underlayColor={colors.green10l} onPress={this.nextQuestion.bind(this)}>
+            <Text>CONTINUE</Text>
           </Button>
-        }
+        )}
       </ContainerView>
     )
   }
@@ -109,17 +95,17 @@ const Button = styled.TouchableHighlight`
   right: 10px;
   bottom: 10px;
   background-color: ${colors.green};
-`;
+`
 
 const Text = styled.Text`
   color: white;
   font-family: BrandonGrotesque-Bold;
-`;
+`
 
 const ContainerView = styled.View`
   flex: 1;
   align-self: stretch;
-`;
+`
 
 const TopContainerView = styled.View`
   flex: 1;

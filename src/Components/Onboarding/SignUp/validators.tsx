@@ -1,5 +1,5 @@
 import { Step } from "./data"
-import { BlockOverflowProperty } from "csstype";
+import { BlockOverflowProperty } from "csstype"
 
 type ValidatorResult = [boolean, string]
 
@@ -24,8 +24,11 @@ export const usernameValidator = (str: string): ValidatorResult => {
 
 export const validate = (str: string, step: Step): ValidatorResult => {
   switch (step) {
-    case Step.Email: return emailValidator(str)
-    case Step.Password: return passwordValidator(str)
-    default: return usernameValidator(str)
+    case Step.Email:
+      return emailValidator(str)
+    case Step.Password:
+      return passwordValidator(str)
+    default:
+      return usernameValidator(str)
   }
 }
