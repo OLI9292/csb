@@ -56,7 +56,10 @@ export default class Solo extends React.Component<Props, State> {
     this.props.navigator.showModal({
       screen: "example.WelcomeScreen",
       animationType: "none",
-      navigatorStyle: { navBarHidden: true },
+      navigatorStyle: {
+        navBarHidden: true,
+        screenBackgroundColor: colors.white,
+      },
     })
   }
 
@@ -76,14 +79,18 @@ export default class Solo extends React.Component<Props, State> {
   }
 
   loadRedGreen = async () => {
+    if (!this.state.user) {
+      return
+    }
     const questionHistory = get(get(await fetchUser(this.state.user.email), "user"), "question2History") || []
     this.setState({ questionHistory })
   }
 
   async componentDidMount() {
     const user = await getUser()
-    this.setState({ user }, this.loadRedGreen)
-    if (!user) {
+    if (user) {
+      this.setState({ user }, this.loadRedGreen)
+    } else {
       this.showWelcomeScreen()
     }
     this.loadData()
@@ -112,6 +119,7 @@ export default class Solo extends React.Component<Props, State> {
         navBarHidden: true,
         statusBarHidden: true,
         statusBarHideWithNavBar: true,
+        screenBackgroundColor: colors.white,
       },
     })
   }
