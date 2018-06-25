@@ -9,18 +9,19 @@ interface StyledProps {
 
 const StyledTextInput = styled.TextInput`
   height: 40;
-  borderbottomcolor: black;
-  borderbottomwidth: 1;
+  border-bottom-color: black;
+  border-bottom-width: 1;
   margin: ${(p: StyledProps) => p._margin || "0px"};
   font-family: BrandonGrotesque-Regular;
   font-size: 16px;
+  text-decoration-line: none;
 `
 
 export interface Props {
   margin: string
   placeholder: string
   text: string
-  autoCapitalize?: string
+  autoCapitalize: string
   secureTextEntry?: boolean
   onChangeText: (str: string) => void
 }
@@ -35,6 +36,7 @@ export default class TextInput extends Component<Props, State> {
   render() {
     return (
       <StyledTextInput
+        underlineColorAndroid={"transparent"}
         secureTextEntry={this.props.secureTextEntry}
         autoCapitalize={this.props.autoCapitalize || "none"}
         autoFocus={true}

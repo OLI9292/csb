@@ -48,7 +48,10 @@ export default class Me extends React.Component<Props, State> {
     this.props.navigator.showModal({
       screen: "example.WelcomeScreen",
       animationType: "none",
-      navigatorStyle: { navBarHidden: true },
+      navigatorStyle: {
+        navBarHidden: true,
+        screenBackgroundColor: colors.white,
+      },
     })
   }
 

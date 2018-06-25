@@ -24,6 +24,7 @@ export default class Welcome extends React.Component<Props, State> {
       passProps: { step: "email" },
       navigatorStyle: {
         navBarHidden: true,
+        screenBackgroundColor: colors.white,
       },
     })
   }

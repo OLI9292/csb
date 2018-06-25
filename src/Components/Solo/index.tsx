@@ -32,61 +32,64 @@ interface State {
   questions: any[]
   questionHistory: QuestionHistory[]
   selectedCategory?: string
+  isNetworking: boolean
   user?: any
   selectedSubCategory?: string
 }
+
+const START_IMMEDIATELY = false
 
 export default class Solo extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
+      isNetworking: false,
       questionHistory: [],
       questions: [],
     }
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
 
+  async componentDidMount() {
+    this.fetchOrUpdateUser()
+    this.fetchQuestions()
+  }
+
   onNavigatorEvent(event: any) {
     if (event.id === "willAppear") {
-      setTimeout(() => this.loadRedGreen(), 500)
+      setTimeout(() => this.fetchOrUpdateUser(), 500)
     }
   }
 
-  showWelcomeScreen() {
-    this.props.navigator.showModal({
-      screen: "example.WelcomeScreen",
-      animationType: "none",
-      navigatorStyle: { navBarHidden: true },
-    })
+  fetchOrUpdateUser = async () => {
+    if (!this.state.user) {
+      const user = await getUser()
+      if (user) {
+        this.setState({ user })
+        this.updateUserQuestionHistory(user.email)
+      } else {
+        this.showWelcomeScreen()
+      }
+    } else {
+      this.updateUserQuestionHistory(this.state.user.email)
+    }
   }
 
-  loadData = async () => {
-    const START_IMMEDIATELY = false
-    const questions = await fetchQuestions()
+  updateUserQuestionHistory = async (email: any) => {
+    const questionHistory = get(get(await fetchUser(email), "user"), "question2History") || []
+    this.setState({ questionHistory })
+  }
 
-    if (questions.error) {
-      console.log(questions.error)
-    } else {
-      this.setState({ questions }, () => {
+  fetchQuestions = async () => {
+    this.setState({ isNetworking: true })
+    const questions = await fetchQuestions()
+    if (!questions.error) {
+      this.setState({ questions: questions, isNetworking: false }, () => {
         if (START_IMMEDIATELY) {
           this.selected("2.1.4", "math", "lesson 2")
         }
       })
     }
-  }
-
-  loadRedGreen = async () => {
-    const questionHistory = get(get(await fetchUser(this.state.user.email), "user"), "question2History") || []
-    this.setState({ questionHistory })
-  }
-
-  async componentDidMount() {
-    const user = await getUser()
-    this.setState({ user }, this.loadRedGreen)
-    if (!user) {
-      this.showWelcomeScreen()
-    }
-    this.loadData()
   }
 
   selected(text: string, category?: string, subCategory?: string) {
@@ -103,6 +106,17 @@ export default class Solo extends React.Component<Props, State> {
     }
   }
 
+  showWelcomeScreen() {
+    this.props.navigator.showModal({
+      screen: "example.WelcomeScreen",
+      animationType: "none",
+      navigatorStyle: {
+        navBarHidden: true,
+        screenBackgroundColor: colors.white,
+      },
+    })
+  }
+
   startGame(questions: any[]) {
     this.props.navigator.showModal({
       screen: "example.GameScreen",
@@ -112,6 +126,7 @@ export default class Solo extends React.Component<Props, State> {
         navBarHidden: true,
         statusBarHidden: true,
         statusBarHideWithNavBar: true,
+        screenBackgroundColor: colors.white,
       },
     })
   }
@@ -140,7 +155,7 @@ export default class Solo extends React.Component<Props, State> {
   }
 
   render() {
-    let { questions, selectedCategory, selectedSubCategory } = this.state
+    let { questions, selectedCategory, selectedSubCategory, isNetworking } = this.state
 
     const button = (q: any) => {
       const text = selectedSubCategory ? q.identifier : selectedCategory ? q.subCategory : q.category
@@ -184,7 +199,7 @@ export default class Solo extends React.Component<Props, State> {
 
           <FlexView />
         </TopView>
-        <ButtonView>{selected.map(button)}</ButtonView>
+        {isNetworking ? <Text>Loading lessons from server.</Text> : <ButtonView>{selected.map(button)}</ButtonView>}
       </ContainerView>
     )
   }
@@ -229,4 +244,10 @@ const Circle = styled.View`
   margin-left: 10px;
   border-radius: 10px;
   background-color: ${(p: CircleProps) => p.color};
+`
+
+const Text = styled.Text`
+  text-align: center;
+  font-size: 12px;
+  color: ${colors.gray};
 `

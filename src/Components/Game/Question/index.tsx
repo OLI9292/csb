@@ -84,7 +84,6 @@ export default class Question extends React.Component<Props, State> {
     // Save under user model
     const _id = this.state.user._id
     const question2History = questionsLog.filter(q => q.finished).map(q => ({ id: q.id, perfect: q.correct }))
-    console.log(question2History.length)
     logQuestionHistory(JSON.stringify({ _id, question2History }))
   }
 
