@@ -56,7 +56,7 @@ interface TextProps {
 
 const Text = styled.Text`
   text-align: left;
-  font-size: 16px;
+  font-size: 18px;
   font-family: ${(p: TextProps) => (p.highlight ? "BrandonGrotesque-Bold" : "BrandonGrotesque-Regular")};
   color: ${(p: TextProps) => (p.highlight ? colors.yellow : "black")};
 `
