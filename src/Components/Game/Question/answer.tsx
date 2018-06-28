@@ -46,13 +46,13 @@ export default class Answer extends React.Component<Props, State> {
     const separator = (idx: number): JSX.Element => <Text key={idx}>, </Text>
 
     return (
-      <ContainerView>
+      <ContainerText adjustsFontSizeToFit={true} numberOfLines={6}>
         {userAnswers
           .map((a, i) => answer(a, i))
           .reduce((accu: (JSX.Element | null)[] | null, elem: JSX.Element | null, idx: number) => {
             return accu === null ? [elem] : [...accu, separator(idx), elem]
           }, null)}
-      </ContainerView>
+      </ContainerText>
     )
   }
 }
@@ -61,25 +61,20 @@ const AnswerSpace = styled.View`
   margin: 0px 10px;
 `
 
-const ContainerView = styled.View`
+const ContainerText = styled.Text`
+  font-size: 20;
+  text-align: center;
   flex: 1;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  align-content: center;
   width: 100%;
+  height: 100%;
+  font-family: BrandonGrotesque-Regular;
 `
 
 interface TextProps {
-  missing: boolean
   correct?: boolean
   isCorrecting?: boolean
 }
 
 const Text = styled.Text`
-  font-size: 20;
   color: ${(p: TextProps) => (p.isCorrecting ? (p.correct ? colors.green : colors.red) : "black")};
-  font-family: BrandonGrotesque-Regular;
-  opacity: ${(p: TextProps) => (p.missing ? 0 : 1)};
 `

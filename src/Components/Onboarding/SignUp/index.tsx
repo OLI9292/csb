@@ -105,7 +105,6 @@ export default class SignUp extends React.Component<Props, State> {
         res.error ? this.setState({ error: res.error }) : this.saveUserAndExit(email, password, username, res._id)
       })
       .catch(e => {
-        console.log(e)
         this.setState({ error: "Something bad happened" })
       })
   }

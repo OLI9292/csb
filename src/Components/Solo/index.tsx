@@ -4,6 +4,7 @@ import styled from "styled-components/native"
 import get from "lodash/get"
 
 import { colors, lighten10l } from "../../lib/colors"
+import { cmpQuestionIdentifiers } from "../../lib/helpers"
 import Button from "../Common/Button"
 import Header from "../Common/Header"
 
@@ -52,7 +53,12 @@ export default class Solo extends React.Component<Props, State> {
 
   async componentDidMount() {
     this.fetchOrUpdateUser()
-    this.fetchQuestions()
+    const questions = await this.fetchQuestions()
+    this.setState({ questions }, () => {
+      if (START_IMMEDIATELY) {
+        this.selected("2.1.6", "math", "lesson 2")
+      }
+    })
   }
 
   onNavigatorEvent(event: any) {
@@ -80,24 +86,21 @@ export default class Solo extends React.Component<Props, State> {
     this.setState({ questionHistory })
   }
 
-  fetchQuestions = async () => {
+  fetchQuestions = async (ids?: string[]): Promise<any[]> => {
     this.setState({ isNetworking: true })
-    const questions = await fetchQuestions()
-    if (!questions.error) {
-      this.setState({ questions: questions, isNetworking: false }, () => {
-        if (START_IMMEDIATELY) {
-          this.selected("2.1.4", "math", "lesson 2")
-        }
-      })
-    }
+    const questions = await fetchQuestions(ids)
+    this.setState({ isNetworking: false })
+    return questions
   }
 
-  selected(text: string, category?: string, subCategory?: string) {
+  selected = async (text: string, category?: string, subCategory?: string) => {
     if (subCategory) {
-      const questions = this.state.questions
+      const questionIds = this.state.questions
         .filter(q => q.category === (category as string))
         .filter(q => q.subCategory === (subCategory as string))
         .filter(q => q.identifier >= text)
+        .map(q => q._id)
+      const questions = await this.fetchQuestions(questionIds)
       this.startGame(questions)
     } else if (category) {
       this.setState({ selectedSubCategory: text })
@@ -172,18 +175,20 @@ export default class Solo extends React.Component<Props, State> {
       )
     }
 
-    const selected = selectedSubCategory
-      ? _.sortBy(
-          questions.filter(q => q.subCategory === selectedSubCategory && q.category === selectedCategory),
-          "identifier"
+    const selected = (() => {
+      if (selectedSubCategory) {
+        return questions
+          .filter(q => q.subCategory === selectedSubCategory && q.category === selectedCategory)
+          .sort(cmpQuestionIdentifiers)
+      } else {
+        const filtered = questions.filter(q => !selectedCategory || q.category === selectedCategory)
+        const unique = _.uniq(filtered, q => q[selectedCategory ? "subCategory" : "category"])
+        return _.sortBy(
+          unique,
+          q => (selectedCategory ? parseInt(q["subCategory"].replace(/\D/g, ""), 10) : q["category"])
         )
-      : _.sortBy(
-          _.uniq(
-            questions.filter(q => !selectedCategory || q.category === selectedCategory),
-            q => q[selectedCategory ? "subCategory" : "category"]
-          ),
-          q => q[selectedCategory ? "subCategory" : "category"]
-        )
+      }
+    })()
 
     return (
       <ContainerView>

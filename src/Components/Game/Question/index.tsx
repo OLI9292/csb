@@ -13,6 +13,7 @@ export interface Props {
   question: any
   questionDone: () => void
   isInterlude: boolean
+  questionSequenceEnded: boolean
 }
 
 export interface QuestionLog {
@@ -73,7 +74,10 @@ export default class Question extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    const questionsLog = this.state.questionsLog
+    const questionsLog = this.props.questionSequenceEnded
+      ? (this.updateRecord("finished", undefined, true) as QuestionLog[])
+      : this.state.questionsLog
+
     if (questionsLog.length === 0) {
       return
     }
@@ -143,7 +147,7 @@ export default class Question extends React.Component<Props, State> {
     this.setState({ questionsLog })
   }
 
-  updateRecord(attr: string, value?: string) {
+  updateRecord(attr: string, value?: string, dismounting: boolean = false): QuestionLog[] | undefined {
     const questionsLog = this.state.questionsLog
     const log = _.last(questionsLog) as QuestionLog
 
@@ -158,8 +162,11 @@ export default class Question extends React.Component<Props, State> {
       log.secondsTaken = secondsDiff(log.startTime, log.endTime)
     }
 
-    questionsLog[questionsLog.length - 1] = log
-    this.setState({ questionsLog })
+    if (dismounting) {
+      return questionsLog
+    } else {
+      this.setState({ questionsLog })
+    }
   }
 
   reset(question: any) {

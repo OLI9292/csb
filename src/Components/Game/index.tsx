@@ -14,6 +14,7 @@ export interface Props {
 interface State {
   questionIndex: number
   questionDone: boolean
+  questionSequenceEnded: boolean
 }
 
 export default class Game extends React.Component<Props, State> {
@@ -21,6 +22,7 @@ export default class Game extends React.Component<Props, State> {
     super(props)
     this.state = {
       questionIndex: 0,
+      questionSequenceEnded: false,
       questionDone: false,
     }
   }
@@ -38,7 +40,12 @@ export default class Game extends React.Component<Props, State> {
     })
 
     if (questionIndex === this.props.questions.length) {
-      setTimeout(() => this.exitGame(), 500)
+      this.setState(
+        {
+          questionSequenceEnded: true,
+        },
+        () => setTimeout(() => this.exitGame(), 500)
+      )
     }
   }
 
@@ -49,7 +56,7 @@ export default class Game extends React.Component<Props, State> {
   }
 
   render() {
-    const { questionIndex, questionDone } = this.state
+    const { questionIndex, questionDone, questionSequenceEnded } = this.state
 
     const { questions } = this.props
 
@@ -66,6 +73,7 @@ export default class Game extends React.Component<Props, State> {
         </TopContainerView>
 
         <Question
+          questionSequenceEnded={questionSequenceEnded}
           isInterlude={questionDone}
           questionDone={this.questionDone.bind(this)}
           question={questions[questionIndex]}
