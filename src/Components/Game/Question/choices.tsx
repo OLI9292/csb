@@ -6,7 +6,6 @@ import { Animated } from "react-native"
 import { colors, lighten10l } from "../../../lib/colors"
 
 export interface Props {
-  ref: React.RefObject<Choices>
   data: string[]
   guessed: (value: string) => void
   isInterlude: boolean

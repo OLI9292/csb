@@ -1,6 +1,9 @@
 import React from "react"
 import { Animated } from "react-native"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import styled from "styled-components/native"
 
+import { colors } from "../../../lib/colors"
 import Prompt from "./prompt"
 import Answer, { UserAnswer } from "./answer"
 import Choices from "./choices"
@@ -41,14 +44,13 @@ interface State {
   userAnswers: string[]
   choices: any[][]
   currentChoices: string[]
+  questionDone: boolean
   choiceTree?: any
   questionsLog: QuestionLog[]
   isCorrecting: boolean
 }
 
 export default class Question extends React.Component<Props, State> {
-  private choicesComponent: React.RefObject<Choices>
-  private promptComponent: React.RefObject<Prompt>
   private nextQuestionTimeout: any
 
   constructor(props: Props) {
@@ -59,12 +61,10 @@ export default class Question extends React.Component<Props, State> {
       currentChoices: [],
       choices: [],
       userAnswers: [],
+      questionDone: false,
       questionsLog: [],
       opacityAnimation: new Animated.Value(1),
     }
-
-    this.promptComponent = React.createRef()
-    this.choicesComponent = React.createRef()
   }
 
   async componentDidMount() {
@@ -181,6 +181,7 @@ export default class Question extends React.Component<Props, State> {
         question: question,
         isCorrecting: false,
         userAnswers: [],
+        questionDone: false,
       },
       this.checkInput
     )
@@ -227,7 +228,11 @@ export default class Question extends React.Component<Props, State> {
   }
 
   questionDone(isUsingChoiceTree: boolean = true): boolean {
-    return this.incorrectIndex(isUsingChoiceTree) === -1
+    const questionDone = this.incorrectIndex(isUsingChoiceTree) === -1
+    if (questionDone) {
+      this.setState({ questionDone: true })
+    }
+    return questionDone
   }
 
   incorrectIndex(isUsingChoiceTree: boolean = true): number {
@@ -277,8 +282,13 @@ export default class Question extends React.Component<Props, State> {
     }
   }
 
+  rewindMove() {
+    const userAnswers = this.state.userAnswers.slice(0, this.state.userAnswers.length - 1)
+    this.setState({ userAnswers }, this.checkInput)
+  }
+
   render() {
-    const { userAnswers, question, choiceTree, choices, isCorrecting, currentChoices } = this.state
+    const { userAnswers, question, choiceTree, choices, isCorrecting, currentChoices, questionDone } = this.state
 
     if (!question) {
       return null
@@ -296,17 +306,25 @@ export default class Question extends React.Component<Props, State> {
           },
         ]}
       >
-        <Prompt ref={this.promptComponent} prompt={question.prompt} secondaryPrompt={question.secondaryPrompt} />
+        <Prompt prompt={question.prompt} secondaryPrompt={question.secondaryPrompt} />
 
         <Answer isCorrecting={isCorrecting} choiceTree={choiceTree} choices={choices} userAnswers={userAnswers} />
 
-        <Choices
-          isInterlude={this.props.isInterlude}
-          ref={this.choicesComponent}
-          data={currentChoices}
-          guessed={this.guessed.bind(this)}
-        />
+        <Choices isInterlude={this.props.isInterlude} data={currentChoices} guessed={this.guessed.bind(this)} />
+
+        {userAnswers.length &&
+          !questionDone && (
+            <IconContainer>
+              <Icon onPress={this.rewindMove.bind(this)} name="rewind" size={30} color={colors.lightGray} />
+            </IconContainer>
+          )}
       </Animated.View>
     )
   }
 }
+
+const IconContainer = styled.View`
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+`
