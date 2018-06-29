@@ -4,7 +4,6 @@ import { colors, lighten10l } from "../../../lib/colors"
 import { Animated } from "react-native"
 
 export interface Props {
-  ref: React.RefObject<Prompt>
   prompt: any[]
   secondaryPrompt: any[]
 }

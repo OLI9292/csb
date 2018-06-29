@@ -89,6 +89,14 @@ export default class Game extends React.Component<Props, State> {
   }
 }
 
+const BottomView = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+`
+
 const FlexedView = styled.View`
   flex: 1;
 `
@@ -99,10 +107,10 @@ const Button = styled.TouchableHighlight`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  background-color: ${colors.green};
   position: absolute;
   right: 10px;
   bottom: 10px;
-  background-color: ${colors.green};
 `
 
 const Text = styled.Text`

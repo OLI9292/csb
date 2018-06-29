@@ -145,7 +145,7 @@ export default class Solo extends React.Component<Props, State> {
 
     if (selectedSubCategory) {
       const answered = _.find(questionHistory, q => q.id === question._id)
-      return answered ? (answered.perfect ? colors.green : colors.yellow) : colors.gray
+      return answered ? (answered.perfect ? colors.green : colors.red) : colors.gray
     } else {
       const selected = (selectedCategory
         ? questions.filter(q => q.category === selectedCategory && q.subCategory === question.subCategory)
@@ -153,7 +153,7 @@ export default class Solo extends React.Component<Props, State> {
       ).map(q => q._id)
       const matching = _.filter(questionHistory, q => _.includes(selected, q.id))
       const perfect = matching.filter(m => m.perfect)
-      return matching.length ? (selected.length === perfect.length ? colors.green : colors.yellow) : colors.gray
+      return matching.length ? (selected.length === perfect.length ? colors.green : colors.red) : colors.gray
     }
   }
 
