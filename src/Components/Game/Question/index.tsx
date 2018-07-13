@@ -294,6 +294,8 @@ export default class Question extends React.Component<Props, State> {
       return null
     }
 
+    const displayRewind = userAnswers.length && !questionDone
+
     return (
       <Animated.View
         style={[
@@ -312,12 +314,11 @@ export default class Question extends React.Component<Props, State> {
 
         <Choices isInterlude={this.props.isInterlude} data={currentChoices} guessed={this.guessed.bind(this)} />
 
-        {userAnswers.length &&
-          !questionDone && (
-            <IconContainer>
-              <Icon onPress={this.rewindMove.bind(this)} name="rewind" size={30} color={colors.lightGray} />
-            </IconContainer>
-          )}
+        {displayRewind ? (
+          <IconContainer>
+            <Icon onPress={this.rewindMove.bind(this)} name="rewind" size={30} color={colors.lightGray} />
+          </IconContainer>
+        ) : null}
       </Animated.View>
     )
   }
