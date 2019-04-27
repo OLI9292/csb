@@ -19,7 +19,7 @@ export default class Me extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {}
-    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
+    // this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
 
   componentDidMount() {
@@ -30,10 +30,8 @@ export default class Me extends React.Component<Props, State> {
     this.loadUser()
   }
 
-  loadUser = async () => {
-    if (this.state.user) {
-      return
-    }
+  async loadUser() {
+    if (this.state.user) return
     const user = await getUser()
     user && this.setState({ user })
   }
@@ -58,14 +56,14 @@ export default class Me extends React.Component<Props, State> {
   render() {
     const { user } = this.state
 
-    if (!user) {
-      return null
-    }
+    // if (!user) {
+    //   return null
+    // }
 
     return (
       <ContainerView>
-        <Text.l>{user.username}</Text.l>
-        <Text.m color={colors.gray}>{user.email}</Text.m>
+        {/* <Text.l>{user.username}</Text.l>
+        <Text.m color={colors.gray}>{user.email}</Text.m> */}
 
         <Button
           onPress={this.logout.bind(this)}

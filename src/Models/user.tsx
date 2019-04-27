@@ -6,9 +6,7 @@ const LOGIN_API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/login"
 
 export async function getUser() {
   const user = await AsyncStorage.getItem("@Storage:user")
-  if (user) {
-    return JSON.parse(user)
-  }
+  if (user) return JSON.parse(user)
 }
 
 export function saveUser(email: string, password: string, username: string, _id: string) {

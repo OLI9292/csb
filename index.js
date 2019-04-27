@@ -1,8 +1,3 @@
-import { AppRegistry } from 'react-native';
-import App from './App';
+import App from "./App"
 
-if (__DEV__) {
-  console.ignoredYellowBox = ['Remote debugger'];
-}
-
-AppRegistry.registerComponent('csb', () => App);
+if (__DEV__) console.ignoredYellowBox = ["Remote debugger"]

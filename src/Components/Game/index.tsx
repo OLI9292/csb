@@ -59,6 +59,7 @@ export default class Game extends React.Component<Props, State> {
     const { questionIndex, questionDone, questionSequenceEnded } = this.state
 
     const { questions } = this.props
+    console.log(questions)
 
     return (
       <ContainerView>

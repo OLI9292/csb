@@ -10,8 +10,8 @@ interface ButtonTextProps {
 const ButtonText = styled.Text`
   color: ${(p: ButtonTextProps) => p.color};
   font-size: 14px;
-  font-family: BrandonGrotesque-Bold;
 `
+// font-family: BrandonGrotesque-Bold;
 
 interface TouchableHighlightProps {
   _margin: string
