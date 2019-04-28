@@ -1,4 +1,5 @@
 import React from "react"
+import { Navigation } from "react-native-navigation"
 import { Component } from "react"
 import styled from "styled-components/native"
 
@@ -10,6 +11,7 @@ import { fetchSequences, Sequence } from "../../Models/sequence"
 
 export interface Props {
   navigator: any
+  componentId: string
 }
 
 interface State {
@@ -30,14 +32,28 @@ export default class Solo extends React.Component<Props, State> {
   async componentDidMount() {
     this.setState({ isNetworking: true })
     const sequences = await fetchSequences("5cba0492bc0e050022fd531e")
+    this.play(sequences[0])
     this.setState({ sequences, isNetworking: false })
+  }
+
+  private play(sequence: Sequence) {
+    Navigation.setRoot({
+      root: {
+        component: {
+          name: "Game",
+          passProps: {
+            sequenceId: sequence.id,
+          },
+        },
+      },
+    })
   }
 
   render() {
     const { sequences, isNetworking } = this.state
 
     const button = (sequence: Sequence) => (
-      <Button onPress={() => console.log("ho")} text={sequence.name} color={colors.blue} />
+      <Button key={sequence.id} onPress={() => this.play(sequence)} text={sequence.name} color={colors.blue} />
     )
 
     return (

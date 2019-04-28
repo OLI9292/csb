@@ -1,134 +1,145 @@
 import React from "react"
+import { View } from "react-native"
 import styled from "styled-components/native"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import { shuffle } from "lodash"
 
-import { colors, lighten10l } from "../../lib/colors"
-import Question from "./Question/index"
+import Choices, { Guess } from "./Question/choices"
+import Prompt from "./Question/prompt"
+import Button from "../Common/Button"
 import ProgressBar from "./progressBar"
 
+import ReadComponent, { Read } from "./Read"
+import { Question, AnswerPart, fetchQuestions } from "../../Models/question"
+
+import { colors, lighten10l } from "../../lib/colors"
+
 export interface Props {
-  questions: any[]
-  navigator: any
+  sequenceId: string
 }
 
 interface State {
-  questionIndex: number
-  questionDone: boolean
-  questionSequenceEnded: boolean
+  elements: any[]
+  feedback?: string
+  hints: string[]
+  guess?: Guess
+  choices: AnswerPart[]
+  isBetweenQuestions: boolean
+  question?: Question
+  read?: Read
 }
 
 export default class Game extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
+
     this.state = {
-      questionIndex: 0,
-      questionSequenceEnded: false,
-      questionDone: false,
+      isBetweenQuestions: false,
+      choices: [],
+      elements: [],
+      hints: [],
     }
   }
 
-  questionDone() {
-    this.setState({ questionDone: true })
+  public async componentDidMount() {
+    const elements = (await fetchQuestions(this.props.sequenceId)).slice(5)
+    this.setState({ elements }, this.nextQuestion)
   }
 
-  nextQuestion() {
-    const questionIndex = this.state.questionIndex + 1
+  private nextQuestion() {
+    const { elements } = this.state
+    const element = elements.shift()
 
-    this.setState({
-      questionIndex: questionIndex,
-      questionDone: false,
-    })
+    if (!element) {
+      return
+    }
 
-    if (questionIndex === this.props.questions.length) {
-      this.setState(
-        {
-          questionSequenceEnded: true,
-        },
-        () => setTimeout(() => this.exitGame(), 500)
-      )
+    if ((element as Read).value) {
+      this.setState({ read: element as Read, question: undefined })
+    } else if ((element as Question).TYPE) {
+      const question = element as Question
+      const { redHerrings, answer } = question
+      const choices = shuffle(redHerrings.concat(answer))
+      this.setState({ question, choices, read: undefined })
     }
   }
 
-  exitGame() {
-    this.props.navigator.dismissModal({
-      animationType: "none",
-    })
-  }
+  private exitGame() {}
+
+  private guessed() {}
 
   render() {
-    const { questionIndex, questionDone, questionSequenceEnded } = this.state
+    const { choices, elements, guess, hints, question, read, feedback, isBetweenQuestions } = this.state
 
-    const { questions } = this.props
-    console.log(questions)
+    const questionComponents = (question: Question) => {
+      const { prompt, answer, redHerrings, TYPE, interactive, type, multipart, formatAsCode, part } = question
+
+      const noPrompt = prompt.length === 0
+      const isInteractive = interactive && interactive.length > 0
+      return (
+        <View>
+          {!noPrompt && (
+            <Prompt
+              isInteractive={isInteractive}
+              formatAsCode={formatAsCode && !isInteractive}
+              feedback={feedback}
+              TYPE={TYPE}
+              type={type}
+              hints={[]}
+              prompt={prompt}
+            />
+          )}
+
+          {redHerrings.length > 0 && (
+            <Choices
+              hide={multipart && part === 1}
+              answer={answer}
+              isBetweenQuestions={isBetweenQuestions}
+              guess={guess}
+              guessed={this.guessed.bind(this)}
+              id={question._id}
+              choices={choices}
+              hints={hints}
+              redHerrings={redHerrings}
+              images={question.images || []}
+              type={TYPE}
+            />
+          )}
+        </View>
+      )
+    }
 
     return (
-      <ContainerView>
-        <TopContainerView>
-          <FlexedView>
+      <View style={{ flex: 1, alignSelf: "stretch" }}>
+        <TopView>
+          <View style={{ flex: 1 }}>
             <Icon onPress={this.exitGame.bind(this)} name="exit-to-app" size={30} color={colors.lightGray} />
-          </FlexedView>
+          </View>
 
-          <ProgressBar completion={questionIndex / questions.length} />
+          <ProgressBar completion={0 / elements.length} />
 
-          <FlexedView />
-        </TopContainerView>
+          <View style={{ flex: 1 }} />
+        </TopView>
 
-        <Question
-          questionSequenceEnded={questionSequenceEnded}
-          isInterlude={questionDone}
-          questionDone={this.questionDone.bind(this)}
-          question={questions[questionIndex]}
-        />
+        {question && questionComponents(question)}
 
-        {questionDone && (
-          <Button underlayColor={colors.green10l} onPress={this.nextQuestion.bind(this)}>
-            <Text>CONTINUE</Text>
-          </Button>
-        )}
-      </ContainerView>
+        {read && <ReadComponent data={read} nextQuestion={this.nextQuestion.bind(this)} />}
+
+        <BottomView />
+      </View>
     )
   }
 }
 
-const BottomView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px;
-`
-
-const FlexedView = styled.View`
-  flex: 1;
-`
-
-const Button = styled.TouchableHighlight`
-  width: 100px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  background-color: ${colors.green};
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-`
-
-const Text = styled.Text`
-  color: white;
-  font-family: BrandonGrotesque-Bold;
-`
-
-const ContainerView = styled.View`
-  flex: 1;
-  align-self: stretch;
-`
-
-const TopContainerView = styled.View`
-  flex: 1;
+const TopView = styled.View`
+  flex: 2;
   align-self: stretch;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   margin: 0px 5px;
+`
+
+const BottomView = styled.View`
+  flex: 1;
 `

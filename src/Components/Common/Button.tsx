@@ -14,13 +14,13 @@ const ButtonText = styled.Text`
 // font-family: BrandonGrotesque-Bold;
 
 interface TouchableHighlightProps {
-  _margin: string
+  margin: string
   color: string
   small: boolean
 }
 
 const StyledButton = styled.TouchableHighlight`
-  margin: ${(p: TouchableHighlightProps) => p._margin};
+  margin: ${(p: TouchableHighlightProps) => p.margin};
   padding: 10px 15px;
   background-color: ${(p: TouchableHighlightProps) => p.color};
   border-radius: 30px;
@@ -51,7 +51,7 @@ export default class Button extends Component<Props, State> {
     return (
       <StyledButton
         disabled={this.props.disabled}
-        _margin={this.props.margin || "0px"}
+        margin={this.props.margin || "0px"}
         color={this.props.color}
         small={this.props.small || false}
         underlayColor={lighten10l(this.props.color)}

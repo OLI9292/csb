@@ -9,7 +9,6 @@ interface Props {
 }
 
 const Text = styled.Text`
-  font-family: BrandonGrotesque-Regular;
   font-size: 16px;
   text-align: ${(p: Props) => (p.error ? "center" : p.textAlign || "left")};
   margin: ${(p: Props) => p.margin || "0px"};

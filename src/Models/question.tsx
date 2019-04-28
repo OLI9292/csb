@@ -1,16 +1,52 @@
-const API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/question2"
-const LOG_API_URL = "https://desolate-plains-35942.herokuapp.com/api/v2/loggedQuestion2"
+import { callApi } from "./query"
 
-import { QuestionLog } from "../Components/Game/Question"
+export interface Source {
+  value: string
+  id: string
+}
 
-export const fetchQuestions = (ids?: string[]): Promise<any> =>
-  fetch(API_URL + (ids ? `?ids=${ids.join(",")}` : ""))
-    .then(res => res.json())
-    .then(json => json)
-    .catch(e => ({ error: e.message }))
+export interface Sources {
+  word?: Source
+  passage?: Source
+}
 
-export const logQuestions = (log: QuestionLog[]): Promise<any> =>
-  fetch(LOG_API_URL, { body: JSON.stringify(log), method: "POST", headers: { "content-type": "application/json" } })
-    .then(res => res.json())
-    .then(json => json)
-    .catch(e => console.log(e))
+export interface PromptPart {
+  value?: string
+  highlight?: boolean
+  hide?: boolean
+  hint?: string
+}
+
+export interface AnswerPart {
+  value?: string
+  prefill?: boolean
+  hint?: string
+}
+
+export interface InteractivePart {
+  correct?: boolean
+  value: string
+  decoration?: string
+  hint?: string
+}
+
+export interface Question {
+  _id: string
+  TYPE: string
+  type: string
+  multipart: boolean
+  part?: number
+  prompt: PromptPart[]
+  secondaryPrompt?: PromptPart[]
+  answer: AnswerPart[]
+  redHerrings: AnswerPart[]
+  interactive?: InteractivePart[]
+  sources: Sources
+  answerCount: number
+  experience?: number
+  formatAsCode: boolean
+  images: string[]
+}
+
+export const fetchQuestions = (id: string): Promise<any[]> =>
+  callApi(`query { questionsForSequence(id: "${id}") }`, ["questions"], "questionsForSequence", null, true)

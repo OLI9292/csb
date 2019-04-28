@@ -1,4 +1,5 @@
 import { extend } from "lodash"
+
 import CONFIG from "../lib/config"
 
 export const callApi = (
@@ -15,18 +16,17 @@ export const callApi = (
   return fetch(CONFIG.API_URL, { body, headers, method })
     .then(res => res.json())
     .then(json => {
-      console.log(json)
-      const { data } = json
-      const result: any = { isLoading: false }
+      const { data, error, errors } = json
 
-      if (json.error || json.errors) {
-        const error = json.error || json.errors[0].message
-        console.log(route, schemas, `ERR: ${error}`)
-        throw new Error(error)
+      if (error || errors) {
+        const err = error || errors[0].message
+        console.log(route, schemas, `ERR: ${err}`)
+        throw new Error(err)
       }
 
       if (data[route]) {
-        console.log(route, schemas.join(", "), data[route])
+        // console.log(route, schemas.join(", "), data[route])
+        if (parseJson) return JSON.parse(data[route])
         return data[route]
       }
     })
